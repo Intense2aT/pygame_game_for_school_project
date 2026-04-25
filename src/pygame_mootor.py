@@ -5,7 +5,7 @@ import pygame
 #could implement a modifiable settings list/file
 
 #event handling stuff
-def __event_response_undefined() -> None:
+def __event_response_undefined(Mootor) -> None:
     raise Exception(event_errors[1])
 
 def define_event_response(event:str, response) -> None:
@@ -17,7 +17,7 @@ pygame_events:dict = {
 
 #every responses first parameter must be the main Mootor class
 pygame_event_responses:dict = {
-    "QUIT": None
+    "QUIT": __event_response_undefined
 }
 
 #põhiline mootori klass
