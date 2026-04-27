@@ -1,6 +1,7 @@
 from error_list import error_dict_standard as std_errors
 from error_list import error_dict_events as event_errors
 from error_list import error_dict_drawing as draw_errors
+from objects import object
 import pygame
 
 #could implement a modifiable settings list/file
@@ -114,7 +115,10 @@ class Mootor:
         self.__use_fps_limit = use
 
     def set_fps_limit(self, limit:float) -> None:
-        self.__fps_limit = limit
+        if not (limit < 0.01):
+            self.__fps_limit = limit
+        else:
+            raise Exception(std_errors[3])
 
     def handle_time(self) -> None:
         if self.__use_fps_limit:
