@@ -1,5 +1,6 @@
 from error_list import error_dict_standard as std_errors
 from error_list import error_dict_events as event_errors
+from error_list import error_dict_drawing as draw_errors
 import pygame
 
 #could implement a modifiable settings list/file
@@ -31,6 +32,10 @@ class Mootor:
     #variables set by init
     #__display_size
 
+    #optional variables to be set by function call
+    #__use_fps_limit
+    #__fps_limit
+
     #constructor
     def __init__(self, display_size:tuple[int, int]) -> None:
         #start pygame
@@ -50,12 +55,18 @@ class Mootor:
         #handle other
         self.__handeled_events:list[str] = []
 
+        #init some optional variables
+        self.__use_backround_colour:bool = False
+        self.__background_colour:tuple[int, int, int, int] = None
+
+        self.__use_fps_limit:bool = False
+        self.__fps_limit:float = None
+
         #set running
         self.__running = True
 
     #destructor
     def __del__(self):
-        #closing pygame
         pygame.quit()
 
     #overall operations
@@ -78,8 +89,36 @@ class Mootor:
                     pygame_event_responses[active_handelable](self)
 
     #drawing
-    def draw_test(self):
-        self.__screen.fill("purple")
+    def use_background_colour(self, use:bool):
+        self.__use_backround_colour = use
 
-    def flip_display(self) -> None:
+    #we could overload to enable values other than rgba
+    def set_background_colour(self, colour:tuple[int, int, int, int]):
+        self.__background_colour = colour
+
+    def __flip_display(self) -> None:
         pygame.display.flip()
+
+    def draw_complete(self):
+        #implement proper draw order system and scene system later with proper objects
+        if self.__use_backround_colour:
+            if self.__background_colour != None:
+                self.__screen.fill(self.__background_colour)
+            else:
+                raise Exception(draw_errors[1])
+        
+        self.__flip_display()
+
+    #time/fps handling
+    def use_fps_limit(self, use:bool) -> None:
+        self.__use_fps_limit = use
+
+    def set_fps_limit(self, limit:float) -> None:
+        self.__fps_limit = limit
+
+    def handle_time(self) -> None:
+        if self.__use_fps_limit:
+            if self.__fps_limit != None:
+                self.__clock.tick(self.__fps_limit)
+            else:
+                raise Exception(std_errors[2])

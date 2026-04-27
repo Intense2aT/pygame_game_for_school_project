@@ -10,17 +10,17 @@ def end_exec(Mootor:mootor.Mootor):
 mootor.define_event_response("QUIT", end_exec)
 manager.add_handelable_event("QUIT")
 
+manager.use_fps_limit(True)
+manager.set_fps_limit(60)
+
+manager.use_background_colour(True)
+manager.set_background_colour((128, 0, 128, 255))
+
 while manager.is_alive():
     #event handling
     manager.handle_events()
 
-
-    # fill the screen with a color to wipe away anything from last frame
-    manager.draw_test()
-
     # RENDER YOUR GAME HERE
+    manager.draw_complete()
 
-    # flip() the display to put your work on screen
-    manager.flip_display()
-
-    #clock.tick(60)  # limits FPS to 60
+    manager.handle_time()
