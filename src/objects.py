@@ -1,4 +1,5 @@
 from error_list import error_dict_objects as object_errors
+from error_list import error_dict_texture_group as texture_errors
 import os
 import pygame
 
@@ -11,47 +12,45 @@ test_base_settings:list = [
     [100, 100], #dimensions   
 ]
 
-# object_texture_settings
-# textured / coloured / both
-# both is used if nothing is specified
+class textureGroup:
+    def __init__(self, colour:tuple[int, int, int, int] = None):
+        self.__texture_dict:dict = {}
+        self.__colour = colour
 
-test_display_settings:list = [
-    "both",
-    #texture settings (for texture and both)
-    "heartPixel1.png",
-    #colour settings (for colour and both)
-    (0xFF, 0x40, 0xFF, 0xFF), #RGBA colour
-    #both
-    "textured", #draw priority (which is drawin on top if possible)
-]
+    def setColour(self, colour:tuple[int, int, int, int]):
+        self.__colour = colour
 
+    def getColour(self):
+        return self.__colour
+    
+    #name = name in map, filepath for loading
+    def addTexture(self, name:str, filepath:str, overWriteExisting:bool = True):
+        if overWriteExisting:
+            self.__texture_dict[name] = pygame.image.load(filepath)
+        else:
+            if name in self.__texture_dict.keys():
+                raise Exception(texture_errors[1])
+            else:
+                self.__texture_dict[name] = pygame.image.load(filepath)
+
+    def getTexture(self, name:str):
+        if name in self.__texture_dict.keys():
+            return self.__texture_dict[name]
+        else:
+            raise Exception(texture_errors[2])
 
 #normal 2d object
 class object:
     #variables set by init
     #__position
     #__dimensions
-    def __handle_texture_init(self, path_from_textures_folder:str):
-        self.__texture_image = pygame.image.load(os.path.join('textures', path_from_textures_folder))
 
-    def __handle_colour_init(self, colour:tuple[int, int, int, int]):
-        self.__colour = colour
-
-    def __init__(self, object_base_settings:list, object_display_settings:list = None):
+    def __init__(self, object_base_settings:list, texGroup:textureGroup = None):
         #base settings handling
         self.__position:list[float, float] = object_base_settings[0]
         self.__dimensions:list[float, float] = object_base_settings[1]
 
-        #display settings handling
-        if object_display_settings != None:
-            if object_display_settings[0] == "textured":
-                self.__handle_texture_init(object_display_settings[1])
-            elif object_display_settings[0] == "coloured":
-                self.__handle_colour_init(object_display_settings[2])
-            else:
-                self.__handle_texture_init(object_display_settings[1])
-                self.__handle_colour_init(object_display_settings[2])
-                self.__draw_priority:str = object_display_settings[3]
+        self.__textures:textureGroup = texGroup
 
     def get_position(self) -> list[float, float]:
         return self.__position
@@ -77,15 +76,26 @@ class object:
                 self.__dimensions[i] += adjustment_vector[i]
             else:
                 raise Exception(object_errors[1])
+            
+    def getTextureGroup(self):
+        return self.__textures
+    
+    def setTextureGroup(self, texGroup:textureGroup):
+        self.__textures = texGroup
     
     #main interraction check for in game things (like player walks in a zone)
-    def game_interract():
+    def game_interract(self):
         pass
 
     #main interraction check for ui objects (like player clicks a button in a menu)
-    def ui_interrack():
+    def ui_interrack(self):
         pass
 
-    #main draw
-    def draw():
-        pass
+    #main draw, drawType is for wether the draw should be textured or coloured
+    def draw(self, screen:pygame.Surface, drawType:str = "coloured"):
+        if drawType == "textured":
+            pass
+        elif drawType != "coloured":
+            raise Exception(object_errors[2])
+        else:
+            pass
