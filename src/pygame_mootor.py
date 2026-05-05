@@ -22,9 +22,11 @@ pygame_event_responses:dict = {
     "QUIT": __event_response_undefined
 }
 
+def testFunc(mootor): print("yes is Col")
 testTexGroup = objects.textureGroup((255, 0, 0, 255))
 testTexGroup.addTexture("std", "src/textures/heartPixel1.png")
 testcase = objects.object(objects.test_base_settings, testTexGroup)
+testcase2 = objects.object(objects.test_base_settings2, testTexGroup)
 
 #deal with this later
 class scene:
@@ -75,8 +77,8 @@ class Mootor:
         #interaction for in game things (can be overwritten when adding a player object
         #to the Mootor)
         #__current_center is as the name imples the current position of the middle of the screen on the global map
-        self.__current_center:list[float, float] = [0, 0]
-        self.__interaction_field_size:list[float, float] = [50, 50]
+        self.__current_center:list[float, float] = [self.__display_size[0] / 2, self.__display_size[1] / 2]
+        self.__interaction_field_size:list[float, float] = [100, 100]
 
         #init some optional variables
         self.__use_backround_colour:bool = False

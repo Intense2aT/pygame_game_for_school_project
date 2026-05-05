@@ -1,5 +1,6 @@
 from error_list import error_dict_objects as object_errors
 from error_list import error_dict_texture_group as texture_errors
+from std_check_functions import collision_two_rectangles_no_rotation
 import os
 import pygame
 
@@ -8,8 +9,13 @@ import pygame
 # dimensions (global perspective)
 
 test_base_settings:list = [
-    [0, 0], #position
+    [540, 360], #position
     [100, 100], #dimensions   
+]
+
+test_base_settings2:list = [
+    [590, 310],
+    [100, 100]
 ]
 
 class textureGroup:
@@ -110,14 +116,15 @@ class object:
         if self.__use_different_interaction_field:
             pass
         else:
-            corner1:list[float, float] = self.get_position()
-            corner2:list[float, float] = [
-                self.get_position()[0] + self.get_dimensions()[0],
-                self.get_position()[1] + self.get_dimensions()[1]
-            ]
-
             cur_center = Mootor.get_current_center()
             cur_if_size = Mootor.get_interaction_field_size()
+
+            iscol:bool = collision_two_rectangles_no_rotation([self.get_position(), self.get_dimensions()], 
+                                                              [cur_center, cur_if_size], 
+                                                              object1FromTopLeft=True)
+
+            if iscol:
+                function(Mootor)
 
     #main interraction check for ui objects (like player clicks a button in a menu)
     def ui_interrack(self):
