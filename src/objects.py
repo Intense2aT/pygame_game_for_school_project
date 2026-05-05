@@ -1,6 +1,5 @@
 from error_list import error_dict_objects as object_errors
 from error_list import error_dict_texture_group as texture_errors
-from pygame_mootor import Mootor
 import os
 import pygame
 
@@ -107,7 +106,7 @@ class object:
     #main interraction check for in game things (like player walks in a zone)
     #first argument for function is always Mootor
     #create overrides for different arguments
-    def game_interract(self, Mootor:Mootor, function):
+    def game_interract(self, Mootor, function):
         if self.__use_different_interaction_field:
             pass
         else:
