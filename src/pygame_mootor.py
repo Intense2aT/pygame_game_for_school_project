@@ -1,7 +1,7 @@
 from error_list import error_dict_standard as std_errors
 from error_list import error_dict_events as event_errors
 from error_list import error_dict_drawing as draw_errors
-from objects import object
+import objects
 import pygame
 
 #could implement a modifiable settings list/file
@@ -22,6 +22,20 @@ pygame_event_responses:dict = {
     "QUIT": __event_response_undefined
 }
 
+testTexGroup = objects.textureGroup((255, 0, 0, 255))
+testTexGroup.addTexture("std", "src/textures/heartPixel1.png")
+testcase = objects.object(objects.test_base_settings, testTexGroup)
+
+#deal with this later
+class scene:
+    #variables set by class
+    #__layers 
+    #__drawable_list
+
+    def __init__(self):
+        self.__layers:int = 5
+#THIS IS IMPORTANT
+
 #põhiline mootori klass
 class Mootor:
     #variables set by class
@@ -29,6 +43,8 @@ class Mootor:
     #__clock
     #__running
     #__handled_events
+    #__current_center
+    #__interaction_field_size
 
     #variables set by init
     #__display_size
@@ -55,6 +71,12 @@ class Mootor:
 
         #handle other
         self.__handeled_events:list[str] = []
+
+        #interaction for in game things (can be overwritten when adding a player object
+        #to the Mootor)
+        #__current_center is as the name imples the current position of the middle of the screen on the global map
+        self.__current_center:list[float, float] = [0, 0]
+        self.__interaction_field_size:list[float, float] = [50, 50]
 
         #init some optional variables
         self.__use_backround_colour:bool = False
@@ -89,6 +111,12 @@ class Mootor:
                 if event.type == pygame_events[active_handelable]:
                     pygame_event_responses[active_handelable](self)
 
+    def get_current_center(self):
+        return self.__current_center
+    
+    def get_interaction_field_size(self):
+        return self.__interaction_field_size
+
     #drawing
     def use_background_colour(self, use:bool):
         self.__use_backround_colour = use
@@ -100,6 +128,7 @@ class Mootor:
     def __flip_display(self) -> None:
         pygame.display.flip()
 
+    #draw complete also handles object tied events
     def draw_complete(self):
         #implement proper draw order system and scene system later with proper objects
         if self.__use_backround_colour:
@@ -107,7 +136,7 @@ class Mootor:
                 self.__screen.fill(self.__background_colour)
             else:
                 raise Exception(draw_errors[1])
-        
+
         self.__flip_display()
 
     #time/fps handling
