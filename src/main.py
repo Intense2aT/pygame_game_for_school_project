@@ -1,10 +1,12 @@
 import pygame_mootor as mootor
+import pygame
 
 # pygame setup
 display_size:tuple[int, int] = (1280, 720)
 manager = mootor.Mootor(display_size)
 
-def end_exec(Mootor:mootor.Mootor):
+#trust me
+def end_exec(Mootor:mootor.Mootor, event):
     Mootor.kill_program()
 
 mootor.define_event_response("QUIT", end_exec)

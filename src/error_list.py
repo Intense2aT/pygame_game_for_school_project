@@ -6,6 +6,7 @@ error_dict_standard:dict = {
 
 error_dict_events:dict = {
     1: "Event Handling Error 1: Response to an event is undefined.",
+    2: "Event Handling Error 2: Eventname in pygame_events is already defined and forceOverride is false.",
 }
 
 error_dict_drawing:dict = {

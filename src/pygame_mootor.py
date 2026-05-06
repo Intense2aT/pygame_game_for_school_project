@@ -7,8 +7,16 @@ import pygame
 #could implement a modifiable settings list/file
 
 #event handling stuff
-def __event_response_undefined(Mootor) -> None:
+def __event_response_undefined(Mootor, event) -> None:
     raise Exception(event_errors[1])
+
+def define_pygame_event(eventName:str, pygameEquivelent, forceOverride:bool = False):
+    if eventName in pygame_events.keys() and not forceOverride:
+        raise Exception(event_errors[2])
+    else:
+        if forceOverride:
+            print("Overriding event definitions is unadvisable. :/")
+        pygame_events[eventName] = pygameEquivelent
 
 def define_event_response(event:str, response) -> None:
     pygame_event_responses[event] = response
@@ -18,6 +26,7 @@ pygame_events:dict = {
 }
 
 #every responses first parameter must be the main Mootor class
+#second parameter shall be the event itself or rather it's returned value
 pygame_event_responses:dict = {
     "QUIT": __event_response_undefined
 }
@@ -111,7 +120,7 @@ class Mootor:
         for event in pygame.event.get():
             for active_handelable in self.__handeled_events:
                 if event.type == pygame_events[active_handelable]:
-                    pygame_event_responses[active_handelable](self)
+                    pygame_event_responses[active_handelable](self, event)
 
     def get_current_center(self):
         return self.__current_center
