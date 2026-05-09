@@ -23,3 +23,12 @@ error_dict_objects:dict = {
     2: "Object Error 2: Object draw() argument drawType is not coloured or textured :/",
     3: "Object Error 3: Variable textureName not set for textured draw call.",
 }
+
+error_dict_scene:dict = {
+    1: "Scene Error 1: Layer name already in scene, unable to add layer of given name.",
+    2: "Scene Error 2: Layer name not in scene",
+    3: "Scene Error 3: Object already in layer, unable to add given object to given layer",
+    4: "Scene Error 4: Object not in given layer, unable to remove nonexistent object.",
+    5: "Scene Error 5: Object not in given layer, unable to modify operations of nonexistent object.",
+    6: "Scene Error 6: Object not in given layer. again... :D"
+}

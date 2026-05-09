@@ -41,3 +41,15 @@ def collision_two_rectangles_no_rotation(object1:list[list[float, float], list[f
             return True
         
     return False
+
+#finish this
+def collision_mouse_rectangle_no_rotation(object1:list[list[float, float]], mouseCords:list[float, float]):
+    pass
+
+def standardise_with_engine(globalCords:list[float, float], curCenterCords:list[float, float]) -> list[float, float]:
+    localCords:list[float, float] = [
+        globalCords[0] - curCenterCords[0],
+        globalCords[1] - curCenterCords[1]
+    ]
+    
+    return localCords

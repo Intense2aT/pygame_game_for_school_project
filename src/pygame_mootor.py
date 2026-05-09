@@ -1,6 +1,7 @@
 from error_list import error_dict_standard as std_errors
 from error_list import error_dict_events as event_errors
 from error_list import error_dict_drawing as draw_errors
+from error_list import error_dict_scene as scene_errors
 import objects
 import pygame
 
@@ -33,19 +34,76 @@ pygame_event_responses:dict = {
 
 def testFunc(mootor): print("yes is Col")
 testTexGroup = objects.textureGroup((255, 0, 0, 255))
-testTexGroup.addTexture("std", "src/textures/heartPixel1.png")
+#testTexGroup.addTexture("std", "src/textures/heartPixel1.png")
 testcase = objects.object(objects.test_base_settings, testTexGroup)
 testcase2 = objects.object(objects.test_base_settings2, testTexGroup)
 
-#deal with this later
+#mootor SHALL DRAW the currently selected SCENE object
+#scene object shall contain and manage data relating to objects in a given scene
+#and which operations to currently perform on them
 class scene:
     #variables set by class
-    #__layers 
-    #__drawable_list
+    #__object_list
+
+    #object in list shall take the following format:
+    #[objectReference, operationsString]
+    #operationsString shall be deconstructed and interpreted during runtime for what
+    #object functions to call
 
     def __init__(self):
-        self.__layers:int = 5
-#THIS IS IMPORTANT
+        self.__object_list:dict[str:list[list]] = {}
+
+    def addLayer(self, layerName:str, forceOverRide:bool = False):
+        if layerName in self.__object_list.keys() and not forceOverRide:
+            raise Exception(scene_errors[1])
+                
+        self.__object_list[layerName] = []
+
+    def getLayerNames(self):
+        return self.__object_list.keys()
+    
+    def addToLayer(self, object:objects.object, operations:str, layerName:str, forceOverRide:bool = False):
+        if layerName not in self.getLayerNames():
+            raise Exception(scene_errors[2])
+        
+        if object in self.__object_list[layerName] and not forceOverRide:
+            raise Exception(scene_errors[3])
+        
+        self.__object_list[layerName].append([object, operations])
+
+    def getObjectOperations(self, object:objects.object, layerName:str):
+        if layerName not in self.getLayerNames():
+            raise Exception(scene_errors[2])
+        
+        for i in self.__object_list[layerName]:
+            if i[0] == object:
+                return i[1]
+            
+        raise Exception(scene_errors[6])
+
+    def modifyObjectOperations(self, object:objects.object, newOperations:str, layerName:str):
+        if layerName not in self.getLayerNames():
+            raise Exception(scene_errors[2])
+        
+        for i in self.__object_list[layerName]:
+            if i[0] == object:
+                #we assume i is a reference to value in the dict
+                #pray it works, fuck python otherwise it would be easy
+                i[1] = newOperations
+                return
+
+        raise Exception(scene_errors[5])
+
+    def removeFromLayer(self, object:objects.object, layerName:str):
+        if layerName not in self.getLayerNames():
+            raise Exception(scene_errors[2])
+        
+        for i in self.__object_list[layerName]:
+            if i[0] == object:
+                self.__object_list[layerName].pop(i)
+                return
+            
+        raise Exception(scene_errors[4])
 
 #põhiline mootori klass
 class Mootor:
@@ -86,7 +144,7 @@ class Mootor:
         #interaction for in game things (can be overwritten when adding a player object
         #to the Mootor)
         #__current_center is as the name imples the current position of the middle of the screen on the global map
-        self.__current_center:list[float, float] = [self.__display_size[0] / 2, self.__display_size[1] / 2]
+        self.__current_center:list[float, float] = [0, 0] #[self.__display_size[0] / 2, self.__display_size[1] / 2]
         self.__interaction_field_size:list[float, float] = [100, 100]
 
         #init some optional variables
@@ -102,6 +160,9 @@ class Mootor:
     #destructor
     def __del__(self):
         pygame.quit()
+
+    def get_screen(self):
+        return self.__screen
 
     #overall operations
     #is running
@@ -147,6 +208,8 @@ class Mootor:
                 self.__screen.fill(self.__background_colour)
             else:
                 raise Exception(draw_errors[1])
+            
+        testcase.draw(self)
 
         self.__flip_display()
 

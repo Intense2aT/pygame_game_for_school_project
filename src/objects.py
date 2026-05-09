@@ -1,6 +1,8 @@
 from error_list import error_dict_objects as object_errors
 from error_list import error_dict_texture_group as texture_errors
 from std_check_functions import collision_two_rectangles_no_rotation
+from std_check_functions import collision_mouse_rectangle_no_rotation
+from std_check_functions import standardise_with_engine
 import os
 import pygame
 
@@ -9,7 +11,7 @@ import pygame
 # dimensions (global perspective)
 
 test_base_settings:list = [
-    [540, 360], #position
+    [590, 310], #position
     [100, 100], #dimensions   
 ]
 
@@ -64,7 +66,7 @@ class object:
         self.__textures:textureGroup = texGroup
 
         self.__use_different_interaction_field:bool = False
-        self.__interaction_field:list[float, float] = None
+        self.__interaction_field:list[list[float, float]] = None
 
     def get_position(self) -> list[float, float]:
         return self.__position
@@ -131,15 +133,16 @@ class object:
         pass
 
     #main draw, drawType is for wether the draw should be textured or coloured
-    def draw(self, screen:pygame.surface.Surface, drawType:str = "coloured", textureName:str = None):
+    def draw(self, Mootor, drawType:str = "coloured", textureName:str = None):
         if drawType == "textured":
             if textureName != None:
-                screen.blit(pygame.transform.scale(self.getTextureGroup().getTexture(textureName), self.get_dimensions()), 
-                            self.get_position())
+                Mootor.get_screen().blit(pygame.transform.scale(self.getTextureGroup().getTexture(textureName), self.get_dimensions()), 
+                            standardise_with_engine(self.get_position(), Mootor.get_current_center()))
             else:
                 raise Exception(object_errors[3])
         elif drawType != "coloured":
             raise Exception(object_errors[2])
         else:
-            pygame.draw.rect(screen, self.getTextureGroup().getColour(), 
-                             (tuple(self.get_position()), tuple(self.get_dimensions())))
+            pygame.draw.rect(Mootor.get_screen(), self.getTextureGroup().getColour(), 
+                             (tuple(standardise_with_engine(self.get_position(), Mootor.get_current_center())),
+                              tuple(self.get_dimensions())))
