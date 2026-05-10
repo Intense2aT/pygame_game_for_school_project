@@ -38,12 +38,6 @@ pygame_event_responses:dict = {
     "MOUSEBUTTONDOWN": __event_response_undefined
 }
 
-def testFunc(mootor): print("yes is Col")
-testTexGroup = objects.textureGroup((255, 0, 0, 255))
-#testTexGroup.addTexture("std", "src/textures/heartPixel1.png")
-testcase = objects.object(objects.test_base_settings, testTexGroup)
-testcase2 = objects.object(objects.test_base_settings2, testTexGroup)
-
 #mootor SHALL DRAW the currently selected SCENE object
 #scene object shall contain and manage data relating to objects in a given scene
 #and which operations to currently perform on them
@@ -55,6 +49,11 @@ class scene:
     #[objectReference, operationsString]
     #operationsString shall be deconstructed and interpreted during runtime for what
     #object functions to call
+    #operationsString shall be spilt by '/'
+    #valid operations are
+    # - draw
+    # - game_interact
+    # - ui_interact
 
     def __init__(self):
         self.__object_list:dict[str:list[list]] = {}
@@ -76,6 +75,12 @@ class scene:
             raise Exception(scene_errors[3])
         
         self.__object_list[layerName].append([object, operations])
+
+    def getThingsOnLayer(self, layerName:str):
+        if layerName not in self.getLayerNames():
+            raise Exception(scene_errors[2])
+        
+        return self.__object_list[layerName]
 
     def getObjectOperations(self, object:objects.object, layerName:str):
         if layerName not in self.getLayerNames():
@@ -128,9 +133,11 @@ class Mootor:
     #__use_fps_limit
     #__fps_limit
 
-    #some other random fucking runtime vars mostly for input
+    #some other important random fucking runtime stuff
     #__cur_mousebutton_states
     #__cur_mouse_position
+    #__cur_renderable_scene
+    #__cur_on_top_ui (OPTIONAL FOR DURING GAME MENU)
 
     #constructor
     def __init__(self, display_size:tuple[int, int]) -> None:
@@ -168,6 +175,9 @@ class Mootor:
         self.__cur_mousebutton_states:list[bool, bool, bool] = [False, False, False]
         self.__cur_mouse_position:tuple[float, float] = None
 
+        self.__cur_renderable_scene:scene = None
+        self.__cur_on_top_ui:scene = None
+
         #set running
         self.__running = True
 
@@ -197,8 +207,17 @@ class Mootor:
                 if event.type == pygame_events[active_handelable]:
                     pygame_event_responses[active_handelable](self, event)
 
+    #DEPRECATED FOR OBJECT CENTER ARE COLLISION
     def get_current_center(self):
         return self.__current_center
+    
+    def get_current_center_fixed(self):
+        cur_center = [
+            self.__current_center[0] + self.__display_size[0] / 2,
+            self.__current_center[1] + self.__display_size[1] / 2
+        ]
+
+        return cur_center
     
     def get_interaction_field_size(self):
         return self.__interaction_field_size
@@ -225,19 +244,53 @@ class Mootor:
     def set_background_colour(self, colour:tuple[int, int, int, int]):
         self.__background_colour = colour
 
+    def set_cur_renderable_scene(self, scene:scene):
+        self.__cur_renderable_scene = scene
+
+    def get_cur_renderable_scene(self):
+        raise self.__cur_renderable_scene
+    
+    def set_cur_on_top_ui(self, scene:scene = None):
+        self.__cur_on_top_ui = scene
+
+    def get_cur_on_top_ui(self):
+        return self.__cur_on_top_ui
+
     def __flip_display(self) -> None:
         pygame.display.flip()
+
+    def __handle_layer_draw_interact(self, objectList:list):
+        for i in objectList:
+            for j in i[1].split('/'):
+                if j == "draw":
+                    i[0].draw(self)
+                elif j == "game_interact":
+                    i[0].game_interact(self)
+                elif j == "ui_interact":
+                    i[0].ui_interact(self)
+                else:
+                    print("ignored invalid object operation")
 
     #draw complete also handles object tied events
     def draw_complete(self):
         #implement proper draw order system and scene system later with proper objects
+
         if self.__use_backround_colour:
             if self.__background_colour != None:
                 self.__screen.fill(self.__background_colour)
             else:
                 raise Exception(draw_errors[1])
-            
-        testcase.draw(self)
+
+        #testcase.draw(self)
+
+        if self.__cur_renderable_scene == None:
+            raise Exception(draw_errors[2])
+        else:
+            layerList:list[str] = self.__cur_renderable_scene.getLayerNames()
+            for layer in layerList:
+                objectList = self.__cur_renderable_scene.getThingsOnLayer(layer)
+                self.__handle_layer_draw_interact(objectList)
+                
 
         self.__flip_display()
 

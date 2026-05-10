@@ -10,16 +10,6 @@ import pygame
 # position (global perspective)
 # dimensions (global perspective)
 
-test_base_settings:list = [
-    [590, 310], #position
-    [100, 100], #dimensions   
-]
-
-test_base_settings2:list = [
-    [590, 310],
-    [100, 100]
-]
-
 class textureGroup:
     def __init__(self, colour:tuple[int, int, int, int] = None):
         self.__texture_dict:dict = {}
@@ -57,6 +47,8 @@ class object:
     #variables set by class and function calls
     #__use_different_interaction_field
     #__interaction_field_size
+    #__game_interact_func
+    #__ui_interact_func
 
     def __init__(self, object_base_settings:list, texGroup:textureGroup = None):
         #base settings handling
@@ -67,6 +59,11 @@ class object:
 
         self.__use_different_interaction_field:bool = False
         self.__interaction_field:list[list[float, float]] = None
+
+        self.__game_interact_func = None
+        self.__ui_interact_func = None
+
+        self.__draw_type = "coloured"
 
     def get_position(self) -> list[float, float]:
         return self.__position
@@ -147,11 +144,17 @@ class object:
     def get_other_interaction_field(self):
         return self.__interaction_field
     
+    def set_game_interact_func(self, function):
+        self.__game_interact_func = function
+
+    def get_game_interact_func(self):
+        return self.__game_interact_func
+    
     #main interraction check for in game things (like player walks in a zone)
     #first argument for function is always Mootor
     #create overrides for different arguments
-    def game_interract(self, Mootor, function):
-        cur_center = Mootor.get_current_center()
+    def game_interact(self, Mootor):
+        cur_center = Mootor.get_current_center_fixed()
         cur_if_size = Mootor.get_interaction_field_size()
 
         if self.__use_different_interaction_field:
@@ -163,22 +166,28 @@ class object:
                                                               [cur_center, cur_if_size], 
                                                               object1FromTopLeft=True)
 
-        if iscol:
-            function(Mootor)
+        if iscol and self.__game_interact_func != None:
+            self.__game_interact_func(Mootor)
 
     #main interraction check for ui objects (like player clicks a button in a menu)
-    def ui_interrack(self, Mootor, function):
+    def ui_interact(self, Mootor, function):
         pass
 
+    def set_draw_type(self, drawType:str):
+        self.__draw_type = drawType
+
+    def get_draw_type(self):
+        return self.__draw_type
+
     #main draw, drawType is for wether the draw should be textured or coloured
-    def draw(self, Mootor, drawType:str = "coloured", textureName:str = None):
-        if drawType == "textured":
+    def draw(self, Mootor, textureName:str = None):
+        if self.__draw_type == "textured":
             if textureName != None:
                 Mootor.get_screen().blit(pygame.transform.scale(self.getTextureGroup().getTexture(textureName), self.get_dimensions()), 
                             standardise_with_engine(self.get_position(), Mootor.get_current_center()))
             else:
                 raise Exception(object_errors[3])
-        elif drawType != "coloured":
+        elif self.__draw_type != "coloured":
             raise Exception(object_errors[2])
         else:
             pygame.draw.rect(Mootor.get_screen(), self.getTextureGroup().getColour(), 

@@ -32,11 +32,11 @@ def collision_two_rectangles_no_rotation(object1:list[list[float, float], list[f
         object2Points.append([object2[0][0] + 0.5 * object2[1][0], object2[0][1] + 0.5 * object2[1][1]])
 
     for point in object2Points:
-        if object1Points[0][0] < point[0] and object1Points[3][0] > point[0] and object1Points[0][1] < point[1] and object1Points[3][1] > point[1]:
+        if object1Points[0][0] <= point[0] and object1Points[3][0] >= point[0] and object1Points[0][1] <= point[1] and object1Points[3][1] >= point[1]:
             return True
     
     for point in object1Points:
-        if object2Points[0][0] < point[0] and object2Points[3][0] > point[0] and object2Points[0][1] < point[1] and object2Points[3][1] > point[1]:
+        if object2Points[0][0] <= point[0] and object2Points[3][0] >= point[0] and object2Points[0][1] <= point[1] and object2Points[3][1] >= point[1]:
             return True
         
     return False
@@ -50,7 +50,7 @@ def collision_mouse_rectangle_no_rotation(object:list[list[float, float]], mouse
         objectPoints.append([object[0][0] - 0.5 * object[1][0], object[0][1] - 0.5 * object[1][1]])
         objectPoints.append([object[0][0] + 0.5 * object[1][0], object[0][1] + 0.5 * object[1][1]])
 
-    if objectPoints[0][0] < mouseCords[0] and mouseCords[0] < objectPoints[1][0] and objectPoints[0][1] < mouseCords[1] and mouseCords[1] < objectPoints[1][1]:
+    if objectPoints[0][0] <= mouseCords[0] and mouseCords[0] <= objectPoints[1][0] and objectPoints[0][1] <= mouseCords[1] and mouseCords[1] <= objectPoints[1][1]:
         return True
     
     return False

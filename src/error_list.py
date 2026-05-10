@@ -11,6 +11,7 @@ error_dict_events:dict = {
 
 error_dict_drawing:dict = {
     1: "Drawing Error 1: Using background colour, but value of background colour is undefined",
+    2: "Drawing Error 2: Current rederable scene not set for draw call."
 }
 
 error_dict_texture_group:dict = {
