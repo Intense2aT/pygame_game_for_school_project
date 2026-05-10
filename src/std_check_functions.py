@@ -1,5 +1,4 @@
 import os
-import pygame
 
 #we check if any of the 4 corners of object 2 are in the first object, confirming collision
 #when object is taken from the center, we assume the given dimensions are the diameter not the radius
@@ -42,9 +41,19 @@ def collision_two_rectangles_no_rotation(object1:list[list[float, float], list[f
         
     return False
 
-#finish this
-def collision_mouse_rectangle_no_rotation(object1:list[list[float, float]], mouseCords:list[float, float]):
-    pass
+def collision_mouse_rectangle_no_rotation(object:list[list[float, float]], mouseCords:list[float, float], objectFromTopLeft:bool = False):
+    objectPoints:list[list, list] = []
+    if objectFromTopLeft:
+        objectPoints.append(object[0])
+        objectPoints.append([object[0][0] + object[1][0], object[0][1] + object[1][1]])
+    else:
+        objectPoints.append([object[0][0] - 0.5 * object[1][0], object[0][1] - 0.5 * object[1][1]])
+        objectPoints.append([object[0][0] + 0.5 * object[1][0], object[0][1] + 0.5 * object[1][1]])
+
+    if objectPoints[0][0] < mouseCords[0] and mouseCords[0] < objectPoints[1][0] and objectPoints[0][1] < mouseCords[1] and mouseCords[1] < objectPoints[1][1]:
+        return True
+    
+    return False
 
 def standardise_with_engine(globalCords:list[float, float], curCenterCords:list[float, float]) -> list[float, float]:
     localCords:list[float, float] = [

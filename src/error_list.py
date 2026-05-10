@@ -22,6 +22,7 @@ error_dict_objects:dict = {
     1: "Object Error 1: Adjusting the dimensions of an object resulted in a negative value for object size.",
     2: "Object Error 2: Object draw() argument drawType is not coloured or textured :/",
     3: "Object Error 3: Variable textureName not set for textured draw call.",
+    4: "Object Error 4: Type of interaction field set is not \"global\"/\"local\"",
 }
 
 error_dict_scene:dict = {

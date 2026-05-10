@@ -23,13 +23,19 @@ def define_event_response(event:str, response) -> None:
     pygame_event_responses[event] = response
 
 pygame_events:dict = {
-    "QUIT": pygame.QUIT
+    "QUIT": pygame.QUIT,
+    "MOUSEMOTION": pygame.MOUSEMOTION,
+    "MOUSEBUTTONUP": pygame.MOUSEBUTTONUP,
+    "MOUSEBUTTONDOWN": pygame.MOUSEBUTTONDOWN
 }
 
 #every responses first parameter must be the main Mootor class
 #second parameter shall be the event itself or rather it's returned value
 pygame_event_responses:dict = {
-    "QUIT": __event_response_undefined
+    "QUIT": __event_response_undefined,
+    "MOUSEMOTION": __event_response_undefined,
+    "MOUSEBUTTONUP": __event_response_undefined,
+    "MOUSEBUTTONDOWN": __event_response_undefined
 }
 
 def testFunc(mootor): print("yes is Col")
@@ -122,6 +128,10 @@ class Mootor:
     #__use_fps_limit
     #__fps_limit
 
+    #some other random fucking runtime vars mostly for input
+    #__cur_mousebutton_states
+    #__cur_mouse_position
+
     #constructor
     def __init__(self, display_size:tuple[int, int]) -> None:
         #start pygame
@@ -153,6 +163,10 @@ class Mootor:
 
         self.__use_fps_limit:bool = False
         self.__fps_limit:float = None
+
+        #runtime vars
+        self.__cur_mousebutton_states:list[bool, bool, bool] = [False, False, False]
+        self.__cur_mouse_position:tuple[float, float] = None
 
         #set running
         self.__running = True
@@ -188,6 +202,20 @@ class Mootor:
     
     def get_interaction_field_size(self):
         return self.__interaction_field_size
+    
+    #mouse
+    #doesn't change the position but changes the value in the Mootor
+    def set_cur_mouse_position(self, position:list[float, float]):
+        self.__cur_mouse_position = position
+
+    def get_cur_mouse_position(self):
+        return self.__cur_mouse_position
+    
+    def set_cur_mousebutton_states(self, states:list):
+        self.__cur_mousebutton_states = states
+
+    def get_cur_mousebutton_states(self):
+        return self.__cur_mousebutton_states
 
     #drawing
     def use_background_colour(self, use:bool):

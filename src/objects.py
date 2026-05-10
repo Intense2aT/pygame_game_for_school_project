@@ -105,8 +105,44 @@ class object:
     def is_using_other_interaction_field(self):
         return self.__use_different_interaction_field
     
-    def set_other_interaction_field(self, field:list[int, int]):
-        self.__interaction_field = field
+    #global just sets it according to the field[position, dimensions] variable
+    #local sets interaction field from the field variable based on the current center of the object
+    def set_other_interaction_field(self, field:list[list[int, int]], type:str = "global"):
+        if type == "global":
+            self.__interaction_field = field
+        elif type == "local":
+            cur_cen:list = [
+                self.get_position()[0] + self.get_dimensions()[0],
+                self.get_position()[1] + self.get_dimensions()[1]
+            ]
+
+            self.__interaction_field = [
+                [
+                    cur_cen[0] + field[0][0], cur_cen[1] + field[0][1]
+                ],
+                [
+                    field[1][0], field[1][1]
+                ]
+            ]
+        else:
+            raise Exception(object_errors[4])
+        
+    #set the other interaction field size using [x, y] radius from the center
+    def set_other_interaction_field_radius(self, radius:list[int, int]):
+        #please help me i cant keep going any longer please this hurts
+        cur_cen:list = [
+            self.get_position()[0] + self.get_dimensions()[0],
+            self.get_position()[1] + self.get_dimensions()[1]
+        ]
+
+        self.__interaction_field = [
+            [
+                cur_cen[0] - radius[0], cur_cen[1] - radius[1]
+            ],
+            [
+                radius[0] * 2, radius[1] * 2
+            ]
+        ]
 
     def get_other_interaction_field(self):
         return self.__interaction_field
@@ -115,21 +151,23 @@ class object:
     #first argument for function is always Mootor
     #create overrides for different arguments
     def game_interract(self, Mootor, function):
-        if self.__use_different_interaction_field:
-            pass
-        else:
-            cur_center = Mootor.get_current_center()
-            cur_if_size = Mootor.get_interaction_field_size()
+        cur_center = Mootor.get_current_center()
+        cur_if_size = Mootor.get_interaction_field_size()
 
+        if self.__use_different_interaction_field:
+            iscol:bool = collision_two_rectangles_no_rotation(self.get_other_interaction_field(),
+                                                              [cur_center, cur_if_size],
+                                                              object1FromTopLeft=True)
+        else:
             iscol:bool = collision_two_rectangles_no_rotation([self.get_position(), self.get_dimensions()], 
                                                               [cur_center, cur_if_size], 
                                                               object1FromTopLeft=True)
 
-            if iscol:
-                function(Mootor)
+        if iscol:
+            function(Mootor)
 
     #main interraction check for ui objects (like player clicks a button in a menu)
-    def ui_interrack(self):
+    def ui_interrack(self, Mootor, function):
         pass
 
     #main draw, drawType is for wether the draw should be textured or coloured
