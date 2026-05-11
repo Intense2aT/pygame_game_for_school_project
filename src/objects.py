@@ -43,6 +43,7 @@ class object:
     #__position
     #__dimensions
     #__textures
+    #__responsive_mouse_button
 
     #variables set by class and function calls
     #__use_different_interaction_field
@@ -62,6 +63,12 @@ class object:
 
         self.__game_interact_func = None
         self.__ui_interact_func = None
+
+        self.__responsive_mouse_button:int = 1
+        #always calls func if button is pressed, otherwise calls only once
+        self.__respond_continuous:bool = False
+        #calls func when button is pressed, otherwise calls on release
+        self.__call_on_press:bool = False
 
         self.__draw_type = "coloured"
 
@@ -150,6 +157,30 @@ class object:
     def get_game_interact_func(self):
         return self.__game_interact_func
     
+    def set_ui_interact_func(self, function):
+        self.__ui_interact_func = function
+
+    def get_ui_interact_func(self):
+        return self.__ui_interact_func
+    
+    def set_responsive_mouse_button(self, button:int):
+        self.__responsive_mouse_button = button
+
+    def get_responsive_mouse_button(self):
+        return self.__responsive_mouse_button
+    
+    def set_respond_continuous(self, set:bool):
+        self.__respond_continuous = set
+
+    def get_respond_continuous(self):
+        return self.__respond_continuous
+    
+    def set_call_on_press(self, set:bool):
+        self.__call_on_press = set
+
+    def get_call_on_press(self):
+        return self.__call_on_press
+
     #main interraction check for in game things (like player walks in a zone)
     #first argument for function is always Mootor
     #create overrides for different arguments
@@ -170,8 +201,47 @@ class object:
             self.__game_interact_func(Mootor)
 
     #main interraction check for ui objects (like player clicks a button in a menu)
-    def ui_interact(self, Mootor, function):
-        pass
+    def ui_interact(self, Mootor):
+        mouse_local = Mootor.get_cur_mouse_position()
+
+        if mouse_local == None:
+            #print("waiting for mouse to appear")
+            return
+        
+        mouse_global = [
+            mouse_local[0] + Mootor.get_current_global_pos()[0],
+            mouse_local[1] + Mootor.get_current_global_pos()[1]
+        ]
+
+        if self.__use_different_interaction_field:
+            iscol:bool = collision_mouse_rectangle_no_rotation(self.get_other_interaction_field(),
+                                                               mouse_global,
+                                                               objectFromTopLeft=True)
+        else: 
+            iscol:bool = collision_mouse_rectangle_no_rotation([self.get_position(), self.get_dimensions()],
+                                                               mouse_global,
+                                                               objectFromTopLeft=True)
+            
+        if not iscol: return
+
+        mouse_states_cur = Mootor.get_cur_mousebutton_states()
+        mouse_states_prev = Mootor.get_prev_mousebutton_states()
+        if self.__call_on_press:
+            if mouse_states_cur[self.__responsive_mouse_button - 1] == True:
+                if self.__respond_continuous:
+                    if self.__ui_interact_func != None:
+                        self.__ui_interact_func(Mootor)
+                else:
+                    if mouse_states_prev[self.__responsive_mouse_button - 1] == False and self.__ui_interact_func != None:
+                        self.__ui_interact_func(Mootor)
+        else:
+            if mouse_states_cur[self.__responsive_mouse_button - 1] == False:
+                if self.__respond_continuous:
+                    if self.__ui_interact_func != None:
+                        self.__ui_interact_func(Mootor)
+                else:
+                    if mouse_states_prev[self.__responsive_mouse_button - 1] == True and self.__ui_interact_func != None:
+                        self.__ui_interact_func(Mootor)
 
     def set_draw_type(self, drawType:str):
         self.__draw_type = drawType
@@ -184,12 +254,12 @@ class object:
         if self.__draw_type == "textured":
             if textureName != None:
                 Mootor.get_screen().blit(pygame.transform.scale(self.getTextureGroup().getTexture(textureName), self.get_dimensions()), 
-                            standardise_with_engine(self.get_position(), Mootor.get_current_center()))
+                            standardise_with_engine(self.get_position(), Mootor.get_current_global_pos()))
             else:
                 raise Exception(object_errors[3])
         elif self.__draw_type != "coloured":
             raise Exception(object_errors[2])
         else:
             pygame.draw.rect(Mootor.get_screen(), self.getTextureGroup().getColour(), 
-                             (tuple(standardise_with_engine(self.get_position(), Mootor.get_current_center())),
+                             (tuple(standardise_with_engine(self.get_position(), Mootor.get_current_global_pos())),
                               tuple(self.get_dimensions())))

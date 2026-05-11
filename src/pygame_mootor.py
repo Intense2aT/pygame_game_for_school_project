@@ -161,7 +161,7 @@ class Mootor:
         #interaction for in game things (can be overwritten when adding a player object
         #to the Mootor)
         #__current_center is as the name imples the current position of the middle of the screen on the global map
-        self.__current_center:list[float, float] = [0, 0] #[self.__display_size[0] / 2, self.__display_size[1] / 2]
+        self.__current_global_pos:list[float, float] = [0, 0] #[self.__display_size[0] / 2, self.__display_size[1] / 2]
         self.__interaction_field_size:list[float, float] = [100, 100]
 
         #init some optional variables
@@ -172,6 +172,7 @@ class Mootor:
         self.__fps_limit:float = None
 
         #runtime vars
+        self.__prev_mousebutton_states:list = []
         self.__cur_mousebutton_states:list[bool, bool, bool] = [False, False, False]
         self.__cur_mouse_position:tuple[float, float] = None
 
@@ -202,19 +203,22 @@ class Mootor:
         self.__handeled_events.append(event)
 
     def handle_events(self) -> None:
+        #quickfix
+        self.__prev_mousebutton_states = self.__cur_mousebutton_states
+
         for event in pygame.event.get():
             for active_handelable in self.__handeled_events:
                 if event.type == pygame_events[active_handelable]:
                     pygame_event_responses[active_handelable](self, event)
 
     #DEPRECATED FOR OBJECT CENTER ARE COLLISION
-    def get_current_center(self):
-        return self.__current_center
+    def get_current_global_pos(self):
+        return self.__current_global_pos
     
     def get_current_center_fixed(self):
         cur_center = [
-            self.__current_center[0] + self.__display_size[0] / 2,
-            self.__current_center[1] + self.__display_size[1] / 2
+            self.__current_global_pos[0] + self.__display_size[0] / 2,
+            self.__current_global_pos[1] + self.__display_size[1] / 2
         ]
 
         return cur_center
@@ -232,6 +236,9 @@ class Mootor:
     
     def set_cur_mousebutton_states(self, states:list):
         self.__cur_mousebutton_states = states
+
+    def get_prev_mousebutton_states(self):
+        return self.__prev_mousebutton_states
 
     def get_cur_mousebutton_states(self):
         return self.__cur_mousebutton_states
