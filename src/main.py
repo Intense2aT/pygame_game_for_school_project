@@ -67,19 +67,15 @@ test_base_settings2:list = [
 
 def testFunc1(mootor): pass #print("testFunc1 called")
 def testFunc1_interact(mootor): print("testFunc1_interact called")
-def testFunc2(mootor): pass #print("testFunc2 called")
 testTexGroup = objects.textureGroup((255, 0, 0, 255))
-testTexGroup2 = objects.textureGroup((0, 0, 255, 255))
 #testTexGroup.addTexture("std", "src/textures/heartPixel1.png")
+testTexGroup.addFont("Tiny5", "src/fonts/Tiny5/Tiny5-Regular.ttf", 10)
 testcase = objects.object(test_base_settings, testTexGroup)
 testcase.set_game_interact_func(testFunc1)
 testcase.set_ui_interact_func(testFunc1_interact)
-testcase2 = objects.object(test_base_settings2, testTexGroup2)
-testcase2.set_game_interact_func(testFunc2)
 
 scene = mootor.scene()
 scene.addLayer("layer_1")
-#scene.addToLayer(testcase2, "draw/ui_interact", "layer_1")
 scene.addToLayer(testcase, "draw/ui_interact", "layer_1")
 
 manager.set_cur_renderable_scene(scene)

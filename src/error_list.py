@@ -17,6 +17,8 @@ error_dict_drawing:dict = {
 error_dict_texture_group:dict = {
     1: "Texture Error 1: adding texture to group but chosen texture name is already bound and overWriteExisting == False.",
     2: "Texture Error 2: texture name used in getTexture() does not exist in textureGroup",
+    3: "Texture Error 3: adding font to the group but chosen font name is already bound",
+    4: "Texture Error 4: font name used in getFont() does not exist in textureGroup"
 }
 
 error_dict_objects:dict = {

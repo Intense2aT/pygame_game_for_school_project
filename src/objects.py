@@ -14,6 +14,7 @@ class textureGroup:
     def __init__(self, colour:tuple[int, int, int, int] = None):
         self.__texture_dict:dict = {}
         self.__colour = colour
+        self.__font_dict:dict = {}
 
     def setColour(self, colour:tuple[int, int, int, int]):
         self.__colour = colour
@@ -36,6 +37,21 @@ class textureGroup:
             return self.__texture_dict[name]
         else:
             raise Exception(texture_errors[2])
+        
+    def addFont(self, name:str, filepath:str, size:int, overWriteExisting:bool = True):
+        if overWriteExisting:
+            self.__font_dict[name] = pygame.font.Font(filepath, size)
+        else:
+            if name in self.__font_dict.keys():
+                raise Exception(texture_errors[3])
+            else:
+                self.__font_dict[name] = pygame.font.Font(filepath, size)
+
+    def getFont(self, name:str):
+        if name in self.__font_dict.keys():
+            return self.__font_dict[name]
+        else:
+            raise Exception(texture_errors[4])
 
 #normal 2d object
 class object:
