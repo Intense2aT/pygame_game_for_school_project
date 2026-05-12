@@ -146,6 +146,9 @@ class Mootor:
             pygame.init()
         else:
             raise Exception(std_errors[1])
+
+        if not pygame.font.get_init():
+            pygame.font.init()
         
         #set display
         self.__screen = pygame.display.set_mode(display_size)

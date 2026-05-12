@@ -53,26 +53,28 @@ manager.use_fps_limit(True)
 manager.set_fps_limit(30)
 
 manager.use_background_colour(True)
-manager.set_background_colour((128, 0, 128, 255))
+manager.set_background_colour((0, 0, 0, 255))
 
 test_base_settings:list = [
-    [565, 285], #position
-    [100, 100], #dimensions   
+    [1180, 0], #position
+    [100, 40], #dimensions   
 ]
 
-test_base_settings2:list = [
-    [590, 310],
-    [100, 100]
-]
-
-def testFunc1(mootor): pass #print("testFunc1 called")
-def testFunc1_interact(mootor): print("testFunc1_interact called")
+def testFunc1(mootor): pass #mootor.kill_program()
+def testFunc1_interact(mootor): mootor.kill_program()
 testTexGroup = objects.textureGroup((255, 0, 0, 255))
 #testTexGroup.addTexture("std", "src/textures/heartPixel1.png")
-testTexGroup.addFont("Tiny5", "src/fonts/Tiny5/Tiny5-Regular.ttf", 10)
+testTexGroup.addFont("Tiny5-10", "src/fonts/Tiny5/Tiny5-Regular.ttf", 10)
 testcase = objects.object(test_base_settings, testTexGroup)
 testcase.set_game_interact_func(testFunc1)
+testcase.set_call_on_press(True)
 testcase.set_ui_interact_func(testFunc1_interact)
+
+testcase.set_draw_with_text(True)
+testcase.set_text_to_draw("Quit")
+testcase.set_text_colour([0, 255, 0, 255])
+testcase.set_text_dimensions_scale_rel(1, 1)
+testcase.update_rendered_text("Tiny5-10")
 
 scene = mootor.scene()
 scene.addLayer("layer_1")

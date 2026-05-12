@@ -88,6 +88,12 @@ class object:
 
         self.__draw_type = "coloured"
 
+        self.__draw_with_text:bool = False
+        self.__text_to_draw:str = None
+        self.__text_colour:list = []
+        self.__text_dimensions:list[float, float] = self.__dimensions
+        self.__rendered_text:pygame.surface.Surface = None
+
     def get_position(self) -> list[float, float]:
         return self.__position
     
@@ -264,6 +270,49 @@ class object:
 
     def get_draw_type(self):
         return self.__draw_type
+    
+    def set_draw_with_text(self, set:bool):
+        self.__draw_with_text = set
+
+    def get_draw_with_text(self):
+        return self.__draw_with_text
+    
+    def set_text_to_draw(self, text:str):
+        self.__text_to_draw = text
+        #QUICKFIX, THIS IS BAD FIX SCALING LATER
+        print("Text scaling bad fix applied in set_text_to_draw() func in object")
+        self.__text_to_draw = self.__text_to_draw + ' '
+
+    def get_text_to_draw(self):
+        return self.__text_to_draw
+    
+    def set_text_colour(self, colour:list[int, int, int, int]):
+        self.__text_colour = colour
+
+    def get_text_colour(self):
+        return self.__text_colour
+    
+    def set_text_dimensions(self, dimensions:list[float, float]):
+        self.__text_dimensions = dimensions
+
+    def set_text_dimensions_scale_rel(self, x_mul:float, y_mul:float):
+        self.__text_dimensions = [
+            self.__dimensions[0] * x_mul,
+            self.__dimensions[1] * y_mul
+        ]
+
+    def get_text_dimensions(self):
+        return self.__text_dimensions
+    
+    #start and end according to python list standards
+    def update_rendered_text(self, fontName:str, AA:bool = 0, start:int = 0, end:int = 0):
+        if end == 0:
+            end = len(self.__text_to_draw) - 1
+        elif end > len(self.__text_to_draw) - 1:
+            raise Exception(object_errors[5])
+
+        text = self.__text_to_draw[start:end]
+        self.__rendered_text = self.__textures.getFont(fontName).render(text, AA, self.__text_colour)
 
     #main draw, drawType is for wether the draw should be textured or coloured
     def draw(self, Mootor, textureName:str = None):
@@ -279,3 +328,11 @@ class object:
             pygame.draw.rect(Mootor.get_screen(), self.getTextureGroup().getColour(), 
                              (tuple(standardise_with_engine(self.get_position(), Mootor.get_current_global_pos())),
                               tuple(self.get_dimensions())))
+            
+        if self.__draw_with_text:
+            if self.__rendered_text != None:
+                final_renderable_surface = pygame.transform.scale(self.__rendered_text, self.get_text_dimensions())
+                Mootor.get_screen().blit(final_renderable_surface,
+                                         standardise_with_engine(self.__position, Mootor.get_current_global_pos()))
+            else:
+                raise Exception(object_errors[6])
