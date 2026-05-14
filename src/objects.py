@@ -92,6 +92,7 @@ class object:
         self.__text_to_draw:str = None
         self.__text_colour:list = []
         self.__text_dimensions:list[float, float] = self.__dimensions
+        self.__text_position:list[float, float] = [self.__position[0], self.__position[1]]
         self.__rendered_text:pygame.surface.Surface = None
 
     def get_position(self) -> list[float, float]:
@@ -314,6 +315,15 @@ class object:
         text = self.__text_to_draw[start:end]
         self.__rendered_text = self.__textures.getFont(fontName).render(text, AA, self.__text_colour)
 
+    def center_text(self, center_x:bool = True, center_y:bool = True):
+        if center_x:
+            self.__text_position[0] = self.__position[0] + (self.__dimensions[0] - self.__text_dimensions[0]) / 2
+
+        if center_y:
+            self.__text_position[1] = self.__position[1] + (self.__dimensions[1] - self.__text_dimensions[1]) / 2
+
+        print(self.__text_position)
+
     #main draw, drawType is for wether the draw should be textured or coloured
     def draw(self, Mootor, textureName:str = None):
         if self.__draw_type == "textured":
@@ -333,6 +343,6 @@ class object:
             if self.__rendered_text != None:
                 final_renderable_surface = pygame.transform.scale(self.__rendered_text, self.get_text_dimensions())
                 Mootor.get_screen().blit(final_renderable_surface,
-                                         standardise_with_engine(self.__position, Mootor.get_current_global_pos()))
+                                         standardise_with_engine(self.__text_position, Mootor.get_current_global_pos()))
             else:
                 raise Exception(object_errors[6])

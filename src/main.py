@@ -56,8 +56,8 @@ manager.use_background_colour(True)
 manager.set_background_colour((0, 0, 0, 255))
 
 test_base_settings:list = [
-    [1180, 0], #position
-    [100, 40], #dimensions   
+    [1080, 0], #position
+    [200, 80], #dimensions   
 ]
 
 def testFunc1(mootor): pass #mootor.kill_program()
@@ -73,8 +73,9 @@ testcase.set_ui_interact_func(testFunc1_interact)
 testcase.set_draw_with_text(True)
 testcase.set_text_to_draw("Quit")
 testcase.set_text_colour([0, 255, 0, 255])
-testcase.set_text_dimensions_scale_rel(1, 1)
+testcase.set_text_dimensions_scale_rel(0.7, 0.7)
 testcase.update_rendered_text("Tiny5-10")
+testcase.center_text()
 
 scene = mootor.scene()
 scene.addLayer("layer_1")
