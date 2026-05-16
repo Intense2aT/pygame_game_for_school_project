@@ -71,6 +71,13 @@ class object:
         #base settings handling
         self.__position:list[float, float] = object_base_settings[0]
         self.__dimensions:list[float, float] = object_base_settings[1]
+        
+        #for drawing a grid of equal sized objects
+        #grid will still use the top left position of the grid for position
+        self.__grid_draw:bool = False
+        self.__grid_dimensions:list[int, int] = None
+        #could make a special grid type later for different textures in one grid
+        #could also add the option for multiple seperately defined intearactionfields related to one object
 
         self.__textures:textureGroup = texGroup
 
@@ -112,6 +119,18 @@ class object:
     
     def set_dimmensions(self, new_dimensions:list[float, float]):
         self.__dimensions = new_dimensions
+
+    def set_grid_draw(self, set:bool):
+        self.__grid_draw = set
+
+    def get_grid_draw(self):
+        return self.__grid_draw
+    
+    def set_grid_size(self, dims:list[int, int]):
+        self.__grid_dimensions = dims
+
+    def get_grid_size(self):
+        return self.__grid_dimensions
 
     #Value after adjustment for either x or y can NOT be negative
     def adjust_dimensions(self, adjustment_vector:list[float, float]):
@@ -333,8 +352,23 @@ class object:
     def draw(self, Mootor):
         if self.__draw_type == "textured":
             if self.__texture_name != None:
-                Mootor.get_screen().blit(pygame.transform.scale(self.getTextureGroup().getTexture(self.__texture_name), self.get_dimensions()), 
-                            standardise_with_engine(self.get_position(), Mootor.get_current_global_pos()))
+                if self.__grid_draw:
+                    if self.__grid_dimensions == None:
+                        raise Exception(object_errors[7])
+                    else:
+                        drawn_object = pygame.transform.scale(self.getTextureGroup().getTexture(self.__texture_name), self.get_dimensions())
+                        true_cords = standardise_with_engine(self.get_position(), Mootor.get_current_global_pos())
+                        draw_list:list = []
+
+                        for i in range(0, self.__grid_dimensions[0]):
+                            for j in range(0, self.__grid_dimensions[1]):
+                                draw_list.append((drawn_object,
+                                                  (true_cords[0] + self.__dimensions[0] * i,
+                                                   true_cords[1] + self.__dimensions[1] * j)))
+                        Mootor.get_screen().blits(draw_list)
+                else:
+                    Mootor.get_screen().blit(pygame.transform.scale(self.getTextureGroup().getTexture(self.__texture_name), self.get_dimensions()), 
+                                             standardise_with_engine(self.get_position(), Mootor.get_current_global_pos()))
             else:
                 raise Exception(object_errors[3])
         elif self.__draw_type != "coloured":

@@ -50,7 +50,7 @@ mootor.define_event_response("MOUSEBUTTONDOWN", on_mouse_down)
 manager.add_handelable_event("MOUSEBUTTONDOWN")
 
 manager.use_fps_limit(True)
-manager.set_fps_limit(30)
+manager.set_fps_limit(120)
 
 manager.use_background_colour(True)
 manager.set_background_colour((0, 0, 0, 255))
@@ -65,7 +65,7 @@ def testFunc1_interact(mootor):
     mootor.set_cur_renderable_scene(scene2)
     print("scene 1 button pressed - going to scene 2")
 testTexGroup = objects.textureGroup((255, 0, 0, 255))
-testTexGroup.addTexture("button_1", "src/textures/test_button_1.png")
+testTexGroup.addTexture("button_1", "src/textures/floors/cobble_1.png")
 testTexGroup.addFont("Tiny5-10", "src/fonts/Tiny5/Tiny5-Regular.ttf", 10)
 testcase = objects.object(test_base_settings, testTexGroup)
 testcase.set_game_interact_func(testFunc1)
@@ -83,8 +83,9 @@ testcase.update_rendered_text("Tiny5-10")
 testcase.center_text()
 
 scene1 = mootor.scene()
-scene1.addLayer("layer_1")
-scene1.addToLayer(testcase, "draw/ui_interact", "layer_1")
+scene1.addLayer("I_AM_SCENE_1")
+scene1.addLayer("layer_0")
+scene1.addToLayer(testcase, "draw/ui_interact", "layer_0")
 
 def testFunc2_interact(mootor): 
     mootor.set_cur_renderable_scene(scene1)
@@ -105,8 +106,22 @@ testcase1.update_rendered_text("Tiny5-10")
 testcase1.center_text()
 
 scene2 = mootor.scene()
+scene2.addLayer("I_AM_SCENE_2")
 scene2.addLayer("layer_1")
+scene2.addLayer("layer_2")
 scene2.addToLayer(testcase1, "draw/ui_interact", "layer_1")
+
+test_grid_settings = [
+    [-10, -10], #position
+    [100, 100], #dimensions   
+]
+testgrid = objects.object(test_grid_settings, testTexGroup)
+testgrid.set_draw_type("textured")
+testgrid.set_texture_name("button_1")
+testgrid.set_grid_draw(True)
+testgrid.set_grid_size([100, 100])
+
+scene2.addToLayer(testgrid, "draw", "layer_2")
 
 manager.set_cur_renderable_scene(scene1)
 

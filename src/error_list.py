@@ -28,6 +28,7 @@ error_dict_objects:dict = {
     4: "Object Error 4: Type of interaction field set is not \"global\"/\"local\"",
     5: "Object Error 5: End value of text when updating rendered text is outside the range of text",
     6: "Object Error 6: Drawing text is enabled but no text has been rendered for the draw call to draw",
+    7: "Object Error 7: Object is using grid_draw, but grid_dimensions is not defined.",
 }
 
 error_dict_scene:dict = {

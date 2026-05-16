@@ -180,6 +180,8 @@ class Mootor:
         self.__cur_mouse_position:tuple[float, float] = None
 
         self.__cur_renderable_scene:scene = None
+        #should think of a better method later
+        self.__scene_change_break:bool = None
         self.__cur_on_top_ui:scene = None
 
         #set running
@@ -254,11 +256,14 @@ class Mootor:
     def set_background_colour(self, colour:tuple[int, int, int, int]):
         self.__background_colour = colour
 
-    def set_cur_renderable_scene(self, scene:scene):
+    def set_cur_renderable_scene(self, scene:scene, runtime_change_safe:bool = True):
         self.__cur_renderable_scene = scene
 
+        if runtime_change_safe:
+            self.__scene_change_break = True
+
     def get_cur_renderable_scene(self):
-        raise self.__cur_renderable_scene
+        return self.__cur_renderable_scene
     
     def set_cur_on_top_ui(self, scene:scene = None):
         self.__cur_on_top_ui = scene
@@ -283,21 +288,21 @@ class Mootor:
 
     #draw complete also handles object tied events
     def draw_complete(self):
-        #implement proper draw order system and scene system later with proper objects
-
         if self.__use_backround_colour:
             if self.__background_colour != None:
                 self.__screen.fill(self.__background_colour)
             else:
                 raise Exception(draw_errors[1])
 
-        #testcase.draw(self)
-
         if self.__cur_renderable_scene == None:
             raise Exception(draw_errors[2])
         else:
-            layerList:list[str] = self.__cur_renderable_scene.getLayerNames()
+            self.__scene_change_break = False
+            layerList:list[str] = self.__cur_renderable_scene.getLayerNames().__reversed__()
             for layer in layerList:
+                if self.__scene_change_break:
+                    break
+
                 objectList = self.__cur_renderable_scene.getThingsOnLayer(layer)
                 self.__handle_layer_draw_interact(objectList)
                 
