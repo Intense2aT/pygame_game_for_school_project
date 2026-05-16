@@ -1,0 +1,11 @@
+{
+    "colours": {
+        "colour_1": [255, 0, 0, 255]
+    },
+    "textures": {
+        "button_1": "src/textures/floors/cobble_1.png"
+    },
+    "fonts": {
+        "Tiny5-10": ["src/fonts/Tiny5/Tiny5-Regular.ttf", 10]
+    }
+}

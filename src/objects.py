@@ -4,6 +4,7 @@ from std_check_functions import collision_two_rectangles_no_rotation
 from std_check_functions import collision_mouse_rectangle_no_rotation
 from std_check_functions import standardise_with_engine
 import os
+import json
 import pygame
 
 # object_base_settings
@@ -11,13 +12,39 @@ import pygame
 # dimensions (global perspective)
 
 class textureGroup:
-    def __init__(self, colour:tuple[int, int, int, int] = None):
+    def __init__(self):
         self.__texture_dict:dict = {}
-        self.__colour = colour
+        self.__colour_dict:dict = {}
         self.__font_dict:dict = {}
 
-    def setColour(self, colour:tuple[int, int, int, int]):
-        self.__colour = colour
+    def load_from_json(self, filepath:str):
+        file = open(filepath, 'r')
+        data = json.load(file)
+
+        for global_key in data.keys():
+            for item in data[global_key]:
+                if global_key == "colours":
+                    self.__colour_dict[item] = data[global_key][item]
+                elif global_key == "textures":
+                    self.__texture_dict[item] = pygame.image.load(data[global_key][item])
+                elif global_key == "fonts":
+                    self.__font_dict[item] = pygame.font.Font(data[global_key][item][0],
+                                                              data[global_key][item][1])
+
+    def addColour(self, name:str, colour:tuple[int, int, int, int], overWriteExisting:bool = True):
+        if overWriteExisting:
+            self.__colour_dict[name] = colour
+        else:
+            if name in self.__colour_dict.keys():
+                raise Exception(texture_errors[5])
+            else:
+                self.__colour_dict[name] = colour
+
+    def getColour(self, name:str):
+        if name in self.__colour_dict.keys():
+            return self.__colour_dict[name]
+        else:
+            raise Exception(texture_errors[6])
 
     def getColour(self):
         return self.__colour
@@ -94,6 +121,7 @@ class object:
         self.__call_on_press:bool = False
 
         self.__draw_type:str = "coloured"
+        self.__colour_name:str = None
         self.__texture_name:str = None
 
         self.__draw_with_text:bool = False
@@ -298,6 +326,12 @@ class object:
     def get_texture_name(self):
         return self.__texture_name
     
+    def set_colour_name(self, colourName:str):
+        self.__colour_name = colourName
+
+    def get_colour_name(self):
+        return self.__colour_name
+    
     def set_draw_with_text(self, set:bool):
         self.__draw_with_text = set
 
@@ -374,9 +408,12 @@ class object:
         elif self.__draw_type != "coloured":
             raise Exception(object_errors[2])
         else:
-            pygame.draw.rect(Mootor.get_screen(), self.getTextureGroup().getColour(), 
-                             (tuple(standardise_with_engine(self.get_position(), Mootor.get_current_global_pos())),
-                              tuple(self.get_dimensions())))
+            if self.__colour_name != None:
+                pygame.draw.rect(Mootor.get_screen(), self.getTextureGroup().getColour(), 
+                                 (tuple(standardise_with_engine(self.get_position(), Mootor.get_current_global_pos())),
+                                  tuple(self.get_dimensions())))
+            else:
+                raise Exception(object_errors[8])
             
         if self.__draw_with_text:
             if self.__rendered_text != None:

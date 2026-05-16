@@ -18,7 +18,9 @@ error_dict_texture_group:dict = {
     1: "Texture Error 1: adding texture to group but chosen texture name is already bound and overWriteExisting == False.",
     2: "Texture Error 2: texture name used in getTexture() does not exist in textureGroup",
     3: "Texture Error 3: adding font to the group but chosen font name is already bound",
-    4: "Texture Error 4: font name used in getFont() does not exist in textureGroup"
+    4: "Texture Error 4: font name used in getFont() does not exist in textureGroup",
+    5: "Texture Error 5: adding colour to the group but chosen colour name is already bound",
+    6: "Texture Error 6: colour name used in getColour() does not exist in textureGroup",
 }
 
 error_dict_objects:dict = {
@@ -29,6 +31,7 @@ error_dict_objects:dict = {
     5: "Object Error 5: End value of text when updating rendered text is outside the range of text",
     6: "Object Error 6: Drawing text is enabled but no text has been rendered for the draw call to draw",
     7: "Object Error 7: Object is using grid_draw, but grid_dimensions is not defined.",
+    8: "Object Error 8: Object's used __colour_name not set for coloured draw call.",
 }
 
 error_dict_scene:dict = {
