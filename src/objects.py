@@ -86,7 +86,8 @@ class object:
         #calls func when button is pressed, otherwise calls on release
         self.__call_on_press:bool = False
 
-        self.__draw_type = "coloured"
+        self.__draw_type:str = "coloured"
+        self.__texture_name:str = None
 
         self.__draw_with_text:bool = False
         self.__text_to_draw:str = None
@@ -272,6 +273,12 @@ class object:
     def get_draw_type(self):
         return self.__draw_type
     
+    def set_texture_name(self, textureName:str):
+        self.__texture_name = textureName
+
+    def get_texture_name(self):
+        return self.__texture_name
+    
     def set_draw_with_text(self, set:bool):
         self.__draw_with_text = set
 
@@ -322,13 +329,11 @@ class object:
         if center_y:
             self.__text_position[1] = self.__position[1] + (self.__dimensions[1] - self.__text_dimensions[1]) / 2
 
-        print(self.__text_position)
-
     #main draw, drawType is for wether the draw should be textured or coloured
-    def draw(self, Mootor, textureName:str = None):
+    def draw(self, Mootor):
         if self.__draw_type == "textured":
-            if textureName != None:
-                Mootor.get_screen().blit(pygame.transform.scale(self.getTextureGroup().getTexture(textureName), self.get_dimensions()), 
+            if self.__texture_name != None:
+                Mootor.get_screen().blit(pygame.transform.scale(self.getTextureGroup().getTexture(self.__texture_name), self.get_dimensions()), 
                             standardise_with_engine(self.get_position(), Mootor.get_current_global_pos()))
             else:
                 raise Exception(object_errors[3])

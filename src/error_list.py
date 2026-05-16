@@ -24,7 +24,7 @@ error_dict_texture_group:dict = {
 error_dict_objects:dict = {
     1: "Object Error 1: Adjusting the dimensions of an object resulted in a negative value for object size.",
     2: "Object Error 2: Object draw() argument drawType is not coloured or textured :/",
-    3: "Object Error 3: Variable textureName not set for textured draw call.",
+    3: "Object Error 3: Object's used __texture_name not set for textured draw call.",
     4: "Object Error 4: Type of interaction field set is not \"global\"/\"local\"",
     5: "Object Error 5: End value of text when updating rendered text is outside the range of text",
     6: "Object Error 6: Drawing text is enabled but no text has been rendered for the draw call to draw",

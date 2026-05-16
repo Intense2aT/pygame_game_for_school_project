@@ -61,27 +61,54 @@ test_base_settings:list = [
 ]
 
 def testFunc1(mootor): pass #mootor.kill_program()
-def testFunc1_interact(mootor): mootor.kill_program()
+def testFunc1_interact(mootor):
+    mootor.set_cur_renderable_scene(scene2)
+    print("scene 1 button pressed - going to scene 2")
 testTexGroup = objects.textureGroup((255, 0, 0, 255))
-#testTexGroup.addTexture("std", "src/textures/heartPixel1.png")
+testTexGroup.addTexture("button_1", "src/textures/test_button_1.png")
 testTexGroup.addFont("Tiny5-10", "src/fonts/Tiny5/Tiny5-Regular.ttf", 10)
 testcase = objects.object(test_base_settings, testTexGroup)
 testcase.set_game_interact_func(testFunc1)
 testcase.set_call_on_press(True)
 testcase.set_ui_interact_func(testFunc1_interact)
 
+testcase.set_draw_type("textured")
+testcase.set_texture_name("button_1")
+
 testcase.set_draw_with_text(True)
-testcase.set_text_to_draw("Quit")
-testcase.set_text_colour([0, 255, 0, 255])
+testcase.set_text_to_draw("To Scene 2")
+testcase.set_text_colour([170, 145, 70, 255])
 testcase.set_text_dimensions_scale_rel(0.7, 0.7)
 testcase.update_rendered_text("Tiny5-10")
 testcase.center_text()
 
-scene = mootor.scene()
-scene.addLayer("layer_1")
-scene.addToLayer(testcase, "draw/ui_interact", "layer_1")
+scene1 = mootor.scene()
+scene1.addLayer("layer_1")
+scene1.addToLayer(testcase, "draw/ui_interact", "layer_1")
 
-manager.set_cur_renderable_scene(scene)
+def testFunc2_interact(mootor): 
+    mootor.set_cur_renderable_scene(scene1)
+    print("scene 2 button pressed - going to scene 1")
+testcase1 = objects.object(test_base_settings, testTexGroup)
+testcase1.set_game_interact_func(testFunc1)
+testcase1.set_call_on_press(True)
+testcase1.set_ui_interact_func(testFunc2_interact)
+
+testcase1.set_draw_type("textured")
+testcase1.set_texture_name("button_1")
+
+testcase1.set_draw_with_text(True)
+testcase1.set_text_to_draw("To Scene 1")
+testcase1.set_text_colour([170, 145, 70, 255])
+testcase1.set_text_dimensions_scale_rel(0.7, 0.7)
+testcase1.update_rendered_text("Tiny5-10")
+testcase1.center_text()
+
+scene2 = mootor.scene()
+scene2.addLayer("layer_1")
+scene2.addToLayer(testcase1, "draw/ui_interact", "layer_1")
+
+manager.set_cur_renderable_scene(scene1)
 
 while manager.is_alive():
     #event handling
