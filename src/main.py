@@ -67,22 +67,13 @@ def testFunc1_interact(mootor):
 testTexGroup = objects.textureGroup()
 testTexGroup.load_from_json("src/game_data/tex_group_1.json")
 testcase = objects.object(test_base_settings, testTexGroup)
-testcase.set_game_interact_func(testFunc1)
-testcase.set_call_on_press(True)
+testcase.load_from_json("src/game_data/object_1.json")
 testcase.set_ui_interact_func(testFunc1_interact)
-
-testcase.set_draw_type("textured")
-testcase.set_texture_name("button_1")
-
-testcase.set_draw_with_text(True)
-testcase.set_text_to_draw("To Scene 2")
-testcase.set_text_colour([170, 145, 70, 255])
 testcase.set_text_dimensions_scale_rel(0.7, 0.7)
 testcase.update_rendered_text("Tiny5-10")
 testcase.center_text()
 
 scene1 = mootor.scene()
-scene1.addLayer("I_AM_SCENE_1")
 scene1.addLayer("layer_0")
 scene1.addToLayer(testcase, "draw/ui_interact", "layer_0")
 
@@ -90,22 +81,14 @@ def testFunc2_interact(mootor):
     mootor.set_cur_renderable_scene(scene1)
     print("scene 2 button pressed - going to scene 1")
 testcase1 = objects.object(test_base_settings, testTexGroup)
+testcase1.load_from_json("src/game_data/object_2.json")
 testcase1.set_game_interact_func(testFunc1)
-testcase1.set_call_on_press(True)
 testcase1.set_ui_interact_func(testFunc2_interact)
-
-testcase1.set_draw_type("textured")
-testcase1.set_texture_name("button_1")
-
-testcase1.set_draw_with_text(True)
-testcase1.set_text_to_draw("To Scene 1")
-testcase1.set_text_colour([170, 145, 70, 255])
 testcase1.set_text_dimensions_scale_rel(0.7, 0.7)
 testcase1.update_rendered_text("Tiny5-10")
 testcase1.center_text()
 
 scene2 = mootor.scene()
-scene2.addLayer("I_AM_SCENE_2")
 scene2.addLayer("layer_1")
 scene2.addLayer("layer_2")
 scene2.addToLayer(testcase1, "draw/ui_interact", "layer_1")
@@ -118,7 +101,7 @@ testgrid = objects.object(test_grid_settings, testTexGroup)
 testgrid.set_draw_type("textured")
 testgrid.set_texture_name("button_1")
 testgrid.set_grid_draw(True)
-testgrid.set_grid_size([100, 100])
+testgrid.set_grid_dimensions([100, 100])
 
 scene2.addToLayer(testgrid, "draw", "layer_2")
 

@@ -32,6 +32,7 @@ error_dict_objects:dict = {
     6: "Object Error 6: Drawing text is enabled but no text has been rendered for the draw call to draw",
     7: "Object Error 7: Object is using grid_draw, but grid_dimensions is not defined.",
     8: "Object Error 8: Object's used __colour_name not set for coloured draw call.",
+    9: "Object Error 9: __text_colour_name for text rendering is not assigned.",
 }
 
 error_dict_scene:dict = {

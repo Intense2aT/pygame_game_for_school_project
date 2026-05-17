@@ -1,0 +1,22 @@
+{
+    "position": [1080, 0],
+    "dimensions": [200, 80],
+    
+    "grid_draw": false,
+    "grid_dimensions": 0,
+
+    "use_different_interaction_field": false,
+    "interaction_field": 0,
+
+    "responsive_mouse_button": 1,
+    "respond_continuous": false,
+    "call_on_press": true,
+
+    "draw_type": "textured",
+    "colour_name": 0,
+    "texture_name": "button_1",
+
+    "draw_with_text": true,
+    "text_to_draw": "To Scene 1",
+    "text_colour_name": "colour_1"
+}

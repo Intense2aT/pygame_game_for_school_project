@@ -17,9 +17,14 @@ class textureGroup:
         self.__colour_dict:dict = {}
         self.__font_dict:dict = {}
 
-    def load_from_json(self, filepath:str):
+    def load_from_json(self, filepath:str, clear_all:bool = True):
         file = open(filepath, 'r')
         data = json.load(file)
+
+        if clear_all:
+            self.__texture_dict:dict = {}
+            self.__colour_dict:dict = {}
+            self.__font_dict:dict = {}
 
         for global_key in data.keys():
             for item in data[global_key]:
@@ -45,9 +50,6 @@ class textureGroup:
             return self.__colour_dict[name]
         else:
             raise Exception(texture_errors[6])
-
-    def getColour(self):
-        return self.__colour
     
     #name = name in map, filepath for loading
     def addTexture(self, name:str, filepath:str, overWriteExisting:bool = True):
@@ -126,10 +128,47 @@ class object:
 
         self.__draw_with_text:bool = False
         self.__text_to_draw:str = None
-        self.__text_colour:list = []
+        self.__text_colour_name:str = None
         self.__text_dimensions:list[float, float] = self.__dimensions
         self.__text_position:list[float, float] = [self.__position[0], self.__position[1]]
         self.__rendered_text:pygame.surface.Surface = None
+
+
+    def load_from_json(self, filepath:str):
+        file = open(filepath, 'r')
+        data = json.load(file)
+
+        for key in data.keys():
+            if key == "position":
+                self.set_position(data[key])
+            elif key == "dimensions":
+                self.set_dimensions(data[key])
+            elif key == "grid_draw":
+                self.set_grid_draw(data[key])
+            elif key == "grid_dimensions":
+                self.set_grid_dimensions(data[key])
+            elif key == "use_different_interaction_field":
+                self.use_other_interaction_field(data[key])
+            elif key == "interaction_field":
+                self.set_other_interaction_field(data[key])
+            elif key == "responsive_mouse_button":
+                self.set_responsive_mouse_button(data[key])
+            elif key == "respond_continuous":
+                self.set_respond_continuous(data[key])
+            elif key == "call_on_press":
+                self.set_call_on_press(data[key])
+            elif key == "draw_type":
+                self.set_draw_type(data[key])
+            elif key == "colour_name":
+                self.set_colour_name(data[key])
+            elif key == "texture_name":
+                self.set_texture_name(data[key])
+            elif key == "draw_with_text":
+                self.set_draw_with_text(data[key])
+            elif key == "text_to_draw":
+                self.set_text_to_draw(data[key])
+            elif key == "text_colour_name":
+                self.set_text_colour_name(data[key])
 
     def get_position(self) -> list[float, float]:
         return self.__position
@@ -145,7 +184,7 @@ class object:
     def get_dimensions(self) -> list[float, float]:
         return self.__dimensions
     
-    def set_dimmensions(self, new_dimensions:list[float, float]):
+    def set_dimensions(self, new_dimensions:list[float, float]):
         self.__dimensions = new_dimensions
 
     def set_grid_draw(self, set:bool):
@@ -154,10 +193,10 @@ class object:
     def get_grid_draw(self):
         return self.__grid_draw
     
-    def set_grid_size(self, dims:list[int, int]):
+    def set_grid_dimensions(self, dims:list[int, int]):
         self.__grid_dimensions = dims
 
-    def get_grid_size(self):
+    def get_grid_dimensions(self):
         return self.__grid_dimensions
 
     #Value after adjustment for either x or y can NOT be negative
@@ -347,11 +386,11 @@ class object:
     def get_text_to_draw(self):
         return self.__text_to_draw
     
-    def set_text_colour(self, colour:list[int, int, int, int]):
-        self.__text_colour = colour
+    def set_text_colour_name(self, name:str):
+        self.__text_colour_name = name
 
-    def get_text_colour(self):
-        return self.__text_colour
+    def get_text_colour_name(self):
+        return self.__text_colour_name
     
     def set_text_dimensions(self, dimensions:list[float, float]):
         self.__text_dimensions = dimensions
@@ -373,7 +412,9 @@ class object:
             raise Exception(object_errors[5])
 
         text = self.__text_to_draw[start:end]
-        self.__rendered_text = self.__textures.getFont(fontName).render(text, AA, self.__text_colour)
+        if self.__text_colour_name == None:
+            raise Exception(object_errors[9])
+        self.__rendered_text = self.__textures.getFont(fontName).render(text, AA, self.__textures.getColour(self.__text_colour_name))
 
     def center_text(self, center_x:bool = True, center_y:bool = True):
         if center_x:
