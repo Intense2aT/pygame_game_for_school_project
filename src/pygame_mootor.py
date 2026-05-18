@@ -2,6 +2,7 @@ from error_list import error_dict_standard as std_errors
 from error_list import error_dict_events as event_errors
 from error_list import error_dict_drawing as draw_errors
 from error_list import error_dict_scene as scene_errors
+from base_keyboard_maps import base_keyboard_map
 import objects
 import pygame
 
@@ -24,6 +25,8 @@ def define_event_response(event:str, response) -> None:
 
 pygame_events:dict = {
     "QUIT": pygame.QUIT,
+    "KEYDOWN": pygame.KEYDOWN,
+    "KEYUP": pygame.KEYUP,
     "MOUSEMOTION": pygame.MOUSEMOTION,
     "MOUSEBUTTONUP": pygame.MOUSEBUTTONUP,
     "MOUSEBUTTONDOWN": pygame.MOUSEBUTTONDOWN
@@ -33,6 +36,8 @@ pygame_events:dict = {
 #second parameter shall be the event itself or rather it's returned value
 pygame_event_responses:dict = {
     "QUIT": __event_response_undefined,
+    "KEYDOWN": __event_response_undefined,
+    "KEYUP": __event_response_undefined,
     "MOUSEMOTION": __event_response_undefined,
     "MOUSEBUTTONUP": __event_response_undefined,
     "MOUSEBUTTONDOWN": __event_response_undefined
@@ -178,6 +183,8 @@ class Mootor:
         self.__prev_mousebutton_states:list = []
         self.__cur_mousebutton_states:list[bool, bool, bool] = [False, False, False]
         self.__cur_mouse_position:tuple[float, float] = None
+
+        self.__keyboard_map:dict = base_keyboard_map
 
         self.__cur_renderable_scene:scene = None
         #should think of a better method later

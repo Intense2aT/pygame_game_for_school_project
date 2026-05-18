@@ -1,11 +1,11 @@
 {
-    "position": [1080, 0],
-    "dimensions": [200, 80],
+    "position": [550, 300],
+    "dimensions": [90, 90],
     
-    "grid_draw": false,
-    "grid_dimensions": 0,
+    "grid_draw": true,
+    "grid_dimensions": [2, 1],
 
-    "use_different_interaction_field": false,
+    "use_different_interaction_field": true,
     "interaction_field": 0,
 
     "responsive_mouse_button": 1,
@@ -17,6 +17,6 @@
     "texture_name": "button_1",
 
     "draw_with_text": true,
-    "text_to_draw": "To Scene 1",
+    "text_to_draw": "SETTINGS",
     "text_colour_name": "colour_1"
 }

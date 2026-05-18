@@ -10,6 +10,12 @@ manager = mootor.Mootor(display_size)
 def end_exec(Mootor:mootor.Mootor, event):
     Mootor.kill_program()
 
+def on_key_down(Mootor:mootor.Mootor, event):
+    print(event)
+
+def on_key_up(Mootor:mootor.Mootor, event):
+    print(event)
+
 def on_mouse_motion(Mootor:mootor.Mootor, event):
     Mootor.set_cur_mouse_position(event.__dict__['pos'])
 
@@ -40,6 +46,12 @@ def on_mouse_down(Mootor:mootor.Mootor, event):
 mootor.define_event_response("QUIT", end_exec)
 manager.add_handelable_event("QUIT")
 
+mootor.define_event_response("KEYDOWN", on_key_down)
+manager.add_handelable_event("KEYDOWN")
+
+mootor.define_event_response("KEYUP", on_key_up)
+manager.add_handelable_event("KEYUP")
+
 mootor.define_event_response("MOUSEMOTION", on_mouse_motion)
 manager.add_handelable_event("MOUSEMOTION")
 
@@ -55,57 +67,74 @@ manager.set_fps_limit(120)
 manager.use_background_colour(True)
 manager.set_background_colour((0, 0, 0, 255))
 
-test_base_settings:list = [
-    [1080, 0], #position
-    [200, 80], #dimensions   
+zero_base:list = [
+    [0, 0],
+    [0, 0]
 ]
 
-def testFunc1(mootor): pass #mootor.kill_program()
-def testFunc1_interact(mootor):
+#main menu init start
+def main_menu_button_1_interact(mootor):
     mootor.set_cur_renderable_scene(scene2)
     print("scene 1 button pressed - going to scene 2")
-testTexGroup = objects.textureGroup()
-testTexGroup.load_from_json("game_data/tex_group_1.json")
-testcase = objects.object(test_base_settings, testTexGroup)
-testcase.load_from_json("game_data/object_1.json")
-testcase.set_ui_interact_func(testFunc1_interact)
-testcase.set_text_dimensions_scale_rel(0.7, 0.7)
-testcase.update_rendered_text("Tiny5-10")
-testcase.center_text()
+tex_group_1 = objects.textureGroup()
+tex_group_1.load_from_json("game_data/tex_group_1.json")
+main_menu_button_1 = objects.object(zero_base, tex_group_1)
+main_menu_button_1.load_from_json("game_data/main_menu/start_menu_button_START.json")
+main_menu_button_1.set_ui_interact_func(main_menu_button_1_interact)
+main_menu_button_1.set_interaction_field_for_grid()
+main_menu_button_1.set_text_dimensions_scale_rel(2.4, 0.8)
+main_menu_button_1.update_rendered_text("Tiny5-20")
+main_menu_button_1.center_text()
 
-scene1 = mootor.scene()
-scene1.addLayer("layer_0")
-scene1.addToLayer(testcase, "draw/ui_interact", "layer_0")
+def main_menu_button_2_interact(mootor):
+    mootor.kill_program()
+main_menu_button_2 = objects.object(zero_base, tex_group_1)
+main_menu_button_2.load_from_json("game_data/main_menu/start_menu_button_QUIT.json")
+main_menu_button_2.set_ui_interact_func(main_menu_button_2_interact)
+main_menu_button_2.set_interaction_field_for_grid()
+main_menu_button_2.set_text_dimensions_scale_rel(1.6, 0.8)
+main_menu_button_2.update_rendered_text("Tiny5-20")
+main_menu_button_2.center_text()
 
+def main_menu_button_3_interact(mootor):
+    print("Settings menu not implemented")
+main_menu_button_3 = objects.object(zero_base, tex_group_1)
+main_menu_button_3.load_from_json("game_data/main_menu/start_menu_button_SETTINGS.json")
+main_menu_button_3.set_ui_interact_func(main_menu_button_3_interact)
+main_menu_button_3.set_interaction_field_for_grid()
+main_menu_button_3.set_text_dimensions_scale_rel(1.6, 0.8)
+main_menu_button_3.update_rendered_text("Tiny5-20")
+main_menu_button_3.center_text()
+
+main_menu_background = objects.object(zero_base, tex_group_1)
+main_menu_background.load_from_json("game_data/main_menu/start_menu_background.json")
+
+main_menu = mootor.scene()
+main_menu.addLayer("layer_0")
+main_menu.addLayer("background")
+main_menu.addToLayer(main_menu_button_1, "draw/ui_interact", "layer_0")
+main_menu.addToLayer(main_menu_button_2, "draw/ui_interact", "layer_0")
+main_menu.addToLayer(main_menu_button_3, "draw/ui_interact", "layer_0")
+main_menu.addToLayer(main_menu_background, "draw", "background")
+#main menu init end
+
+#scene 2 init start
 def testFunc2_interact(mootor): 
-    mootor.set_cur_renderable_scene(scene1)
+    mootor.set_cur_renderable_scene(main_menu)
     print("scene 2 button pressed - going to scene 1")
-testcase1 = objects.object(test_base_settings, testTexGroup)
+testcase1 = objects.object(zero_base, tex_group_1)
 testcase1.load_from_json("game_data/object_2.json")
-testcase1.set_game_interact_func(testFunc1)
 testcase1.set_ui_interact_func(testFunc2_interact)
 testcase1.set_text_dimensions_scale_rel(0.7, 0.7)
-testcase1.update_rendered_text("Tiny5-10")
+testcase1.update_rendered_text("Tiny5-20")
 testcase1.center_text()
 
 scene2 = mootor.scene()
 scene2.addLayer("layer_1")
-scene2.addLayer("layer_2")
 scene2.addToLayer(testcase1, "draw/ui_interact", "layer_1")
+#scene 2 init end
 
-test_grid_settings = [
-    [-10, -10], #position
-    [100, 100], #dimensions   
-]
-testgrid = objects.object(test_grid_settings, testTexGroup)
-testgrid.set_draw_type("textured")
-testgrid.set_texture_name("button_1")
-testgrid.set_grid_draw(True)
-testgrid.set_grid_dimensions([100, 100])
-
-scene2.addToLayer(testgrid, "draw", "layer_2")
-
-manager.set_cur_renderable_scene(scene1)
+manager.set_cur_renderable_scene(main_menu)
 
 while manager.is_alive():
     #event handling

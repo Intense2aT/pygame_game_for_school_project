@@ -258,6 +258,15 @@ class object:
             ]
         ]
 
+    def set_interaction_field_for_grid(self):
+        self.__interaction_field = [
+            self.__position,
+            [
+                self.__dimensions[0] * self.__grid_dimensions[0],
+                self.__dimensions[1] * self.__grid_dimensions[1]
+            ]
+        ]
+
     def get_other_interaction_field(self):
         return self.__interaction_field
     
@@ -417,11 +426,21 @@ class object:
         self.__rendered_text = self.__textures.getFont(fontName).render(text, AA, self.__textures.getColour(self.__text_colour_name))
 
     def center_text(self, center_x:bool = True, center_y:bool = True):
-        if center_x:
-            self.__text_position[0] = self.__position[0] + (self.__dimensions[0] - self.__text_dimensions[0]) / 2
+        if not self.__grid_draw:
+            if center_x:
+                self.__text_position[0] = self.__position[0] + (self.__dimensions[0] - self.__text_dimensions[0]) / 2
 
-        if center_y:
-            self.__text_position[1] = self.__position[1] + (self.__dimensions[1] - self.__text_dimensions[1]) / 2
+            if center_y:
+                self.__text_position[1] = self.__position[1] + (self.__dimensions[1] - self.__text_dimensions[1]) / 2
+        else:
+            if self.__grid_dimensions == None:
+                raise Exception(object_errors[7])
+
+            if center_x:
+                self.__text_position[0] = self.__position[0] + (self.__dimensions[0] * self.__grid_dimensions[0] - self.__text_dimensions[0]) / 2
+
+            if center_y:
+                self.__text_position[1] = self.__position[1] + (self.__dimensions[1] * self.__grid_dimensions[1] - self.__text_dimensions[1]) / 2
 
     #main draw, drawType is for wether the draw should be textured or coloured
     def draw(self, Mootor):
