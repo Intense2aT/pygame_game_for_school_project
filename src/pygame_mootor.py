@@ -2,7 +2,7 @@ from error_list import error_dict_standard as std_errors
 from error_list import error_dict_events as event_errors
 from error_list import error_dict_drawing as draw_errors
 from error_list import error_dict_scene as scene_errors
-from base_keyboard_maps import base_keyboard_map
+from base_keyboard_maps import base_keyboard_map, empty_keyup_responses, empty_keydown_responses
 import objects
 import pygame
 
@@ -185,6 +185,8 @@ class Mootor:
         self.__cur_mouse_position:tuple[float, float] = None
 
         self.__keyboard_map:dict = base_keyboard_map
+        self.__keyup_responses:dict = empty_keyup_responses
+        self.__keydown_responses:dict = empty_keydown_responses
 
         self.__cur_renderable_scene:scene = None
         #should think of a better method later

@@ -1,5 +1,11 @@
 import pygame
 
+def __response_undefined(response:bool = False, error:bool = False):
+    if response:
+        print("__respone_undefined for keyaction")
+    if error:
+        raise Exception("__respone_undefined for keyaction")
+
 base_keyboard_map:dict = {
     pygame.K_a: "a",
     pygame.K_b: "b",
@@ -27,4 +33,62 @@ base_keyboard_map:dict = {
     pygame.K_x: "x",
     pygame.K_y: "y",
     pygame.K_z: "z",
+}
+
+empty_keyup_responses:dict = {
+    "a": __response_undefined,
+    "b": __response_undefined,
+    "c": __response_undefined,
+    "d": __response_undefined,
+    "e": __response_undefined,
+    "f": __response_undefined,
+    "g": __response_undefined,
+    "h": __response_undefined,
+    "i": __response_undefined,
+    "j": __response_undefined,
+    "k": __response_undefined,
+    "l": __response_undefined,
+    "m": __response_undefined,
+    "n": __response_undefined,
+    "o": __response_undefined,
+    "p": __response_undefined,
+    "q": __response_undefined,
+    "r": __response_undefined,
+    "s": __response_undefined,
+    "t": __response_undefined,
+    "u": __response_undefined,
+    "v": __response_undefined,
+    "w": __response_undefined,
+    "x": __response_undefined,
+    "y": __response_undefined,
+    "z": __response_undefined,
+}
+
+empty_keydown_responses:dict = {
+    "a": __response_undefined,
+    "b": __response_undefined,
+    "c": __response_undefined,
+    "d": __response_undefined,
+    "e": __response_undefined,
+    "f": __response_undefined,
+    "g": __response_undefined,
+    "h": __response_undefined,
+    "i": __response_undefined,
+    "j": __response_undefined,
+    "k": __response_undefined,
+    "l": __response_undefined,
+    "m": __response_undefined,
+    "n": __response_undefined,
+    "o": __response_undefined,
+    "p": __response_undefined,
+    "q": __response_undefined,
+    "r": __response_undefined,
+    "s": __response_undefined,
+    "t": __response_undefined,
+    "u": __response_undefined,
+    "v": __response_undefined,
+    "w": __response_undefined,
+    "x": __response_undefined,
+    "y": __response_undefined,
+    "z": __response_undefined,
 }
