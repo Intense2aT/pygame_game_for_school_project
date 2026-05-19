@@ -524,4 +524,18 @@ class object:
                 raise Exception(object_errors[6])
             
 class player(object):
-    pass
+    def center_on_screen(self, mootor):
+        self.set_position([mootor.get_current_center_fixed()[0] - self.get_dimensions()[0] / 2,
+                           mootor.get_current_center_fixed()[1] - self.get_dimensions()[1] / 2])
+
+    def set_move_speed(self, speed:float):
+        self.__player_speed = speed
+
+    def get_player_speed(self):
+        return self.__player_speed
+    
+    def set_dir_vector(self, vector:list[int, int]):
+        self.__player_move_direction = vector
+
+    def get_dir_vector(self):
+        return self.__player_move_direction
