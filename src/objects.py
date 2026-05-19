@@ -17,6 +17,9 @@ class textureGroup:
         self.__colour_dict:dict = {}
         self.__font_dict:dict = {}
 
+    def get_texture_group(self):
+        return self.__texture_dict
+
     def load_from_json(self, filepath:str, clear_all:bool = True):
         file = open(filepath, 'r')
         data = json.load(file)
@@ -31,7 +34,7 @@ class textureGroup:
                 if global_key == "colours":
                     self.__colour_dict[item] = data[global_key][item]
                 elif global_key == "textures":
-                    self.__texture_dict[item] = pygame.image.load(data[global_key][item])
+                    self.__texture_dict[item] = pygame.image.load(data[global_key][item]).convert_alpha()
                 elif global_key == "fonts":
                     self.__font_dict[item] = pygame.font.Font(data[global_key][item][0],
                                                               data[global_key][item][1])
@@ -105,6 +108,8 @@ class object:
         #grid will still use the top left position of the grid for position
         self.__grid_draw:bool = False
         self.__grid_dimensions:list[int, int] = None
+        self.__differentiated_points:dict = {}
+        self.__grid_surface_prerender:pygame.surface.Surface = None
         #could make a special grid type later for different textures in one grid
         #could also add the option for multiple seperately defined intearactionfields related to one object
 
@@ -442,6 +447,38 @@ class object:
             if center_y:
                 self.__text_position[1] = self.__position[1] + (self.__dimensions[1] * self.__grid_dimensions[1] - self.__text_dimensions[1]) / 2
 
+    def add_differentiated_grid_point(self, positionStr:str, textureName:str, override:bool = True):
+        if not (0 < int(positionStr.split('/')[0]) <= self.__grid_dimensions[0]): raise Exception("Can't add other grid point, position X value not in grid")
+        if not (0 < int(positionStr.split('/')[1]) <= self.__grid_dimensions[1]): raise Exception("Can't add other grid point, position Y value not in grid")
+
+        if positionStr not in self.__differentiated_points.keys():
+            self.__differentiated_points[positionStr] = textureName
+        elif override:
+            self.__differentiated_points[positionStr] = textureName
+        else:
+            raise Exception(object_errors[10])
+
+    def prerender_grid(self, use_redefined_points:bool = True):
+        self.__grid_surface_prerender = pygame.Surface([self.__grid_dimensions[0] * self.__dimensions[0],
+                                                        self.__grid_dimensions[1] * self.__dimensions[1]], pygame.SRCALPHA, 32)
+        
+        drawn_object = pygame.transform.scale(self.getTextureGroup().getTexture(self.__texture_name), self.get_dimensions())
+
+        if use_redefined_points:
+            for x in range(0, self.__grid_dimensions[0]):
+                for y in range(0, self.__grid_dimensions[1]):
+                    key = (str(x + 1) + '/' + str(y + 1))
+                    if key in self.__differentiated_points.keys():
+                        drawn_object = pygame.transform.scale(self.getTextureGroup().getTexture(self.__differentiated_points[key]), self.get_dimensions())
+                        self.__grid_surface_prerender.blit(drawn_object, (self.__dimensions[0] * x, self.__dimensions[1] * y))
+                        drawn_object = pygame.transform.scale(self.getTextureGroup().getTexture(self.__texture_name), self.get_dimensions())
+                    else:
+                        self.__grid_surface_prerender.blit(drawn_object, (self.__dimensions[0] * x, self.__dimensions[1] * y))
+        else:
+            for x in range(0, self.__grid_dimensions[0]):
+                for y in range(0, self.__grid_dimensions[1]):
+                    self.__grid_surface_prerender.blit(drawn_object, (self.__dimensions[0] * x, self.__dimensions[1] * y))
+
     #main draw, drawType is for wether the draw should be textured or coloured
     def draw(self, Mootor):
         if self.__draw_type == "textured":
@@ -450,16 +487,19 @@ class object:
                     if self.__grid_dimensions == None:
                         raise Exception(object_errors[7])
                     else:
-                        drawn_object = pygame.transform.scale(self.getTextureGroup().getTexture(self.__texture_name), self.get_dimensions())
-                        true_cords = standardise_with_engine(self.get_position(), Mootor.get_current_global_pos())
-                        draw_list:list = []
+                        if self.__grid_surface_prerender != None:
+                            Mootor.get_screen().blit(self.__grid_surface_prerender, standardise_with_engine(self.get_position(), Mootor.get_current_global_pos()))
+                        else:
+                            drawn_object = pygame.transform.scale(self.getTextureGroup().getTexture(self.__texture_name), self.get_dimensions())
+                            true_cords = standardise_with_engine(self.get_position(), Mootor.get_current_global_pos())
+                            draw_list:list = []
 
-                        for i in range(0, self.__grid_dimensions[0]):
-                            for j in range(0, self.__grid_dimensions[1]):
-                                draw_list.append((drawn_object,
-                                                  (true_cords[0] + self.__dimensions[0] * i,
-                                                   true_cords[1] + self.__dimensions[1] * j)))
-                        Mootor.get_screen().blits(draw_list)
+                            for i in range(0, self.__grid_dimensions[0]):
+                                for j in range(0, self.__grid_dimensions[1]):
+                                    draw_list.append((drawn_object,
+                                                    (true_cords[0] + self.__dimensions[0] * i,
+                                                    true_cords[1] + self.__dimensions[1] * j)))
+                            Mootor.get_screen().blits(draw_list)
                 else:
                     Mootor.get_screen().blit(pygame.transform.scale(self.getTextureGroup().getTexture(self.__texture_name), self.get_dimensions()), 
                                              standardise_with_engine(self.get_position(), Mootor.get_current_global_pos()))
@@ -482,3 +522,6 @@ class object:
                                          standardise_with_engine(self.__text_position, Mootor.get_current_global_pos()))
             else:
                 raise Exception(object_errors[6])
+            
+class player(object):
+    pass

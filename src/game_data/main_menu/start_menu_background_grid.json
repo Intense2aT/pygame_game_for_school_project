@@ -1,0 +1,11 @@
+{
+    "position": [0, 0],
+    "dimensions": [40, 40],
+    
+    "grid_draw": true,
+    "grid_dimensions": [32, 18],
+
+    "draw_type": "textured",
+    "colour_name": 0,
+    "texture_name": "puitpõrand"
+}

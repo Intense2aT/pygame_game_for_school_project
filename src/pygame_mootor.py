@@ -2,7 +2,7 @@ from error_list import error_dict_standard as std_errors
 from error_list import error_dict_events as event_errors
 from error_list import error_dict_drawing as draw_errors
 from error_list import error_dict_scene as scene_errors
-from base_keyboard_maps import base_keyboard_map, empty_keyup_responses, empty_keydown_responses
+from base_keyboard_maps import base_keyboard_map, empty_keyup_responses, empty_keydown_responses, __response_undefined
 import objects
 import pygame
 
@@ -225,6 +225,37 @@ class Mootor:
                 if event.type == pygame_events[active_handelable]:
                     pygame_event_responses[active_handelable](self, event)
 
+    def get_keyboard_map(self):
+        return self.__keyboard_map
+    
+    def get_keyup_responses(self):
+        return self.__keyup_responses
+    
+    def get_keydown_responses(self):
+        return self.__keydown_responses
+
+    def add_function_keyup(self, key:str, func, overwrite:bool = True):
+        if key in self.__keyup_responses.keys():
+            if overwrite:
+                self.__keyup_responses[key] = func
+            elif self.__keyup_responses[key] != __response_undefined:
+                self.__keyup_responses[key] = func
+            else:
+                raise Exception(std_errors[5])
+        else:
+            raise Exception(std_errors[4])
+
+    def add_function_keydown(self, key:str, func, overwrite:bool = True):
+        if key in self.__keydown_responses.keys():
+            if overwrite:
+                self.__keydown_responses[key] = func
+            elif self.__keydown_responses[key] != __response_undefined:
+                self.__keydown_responses[key] = func
+            else:
+                raise Exception(std_errors[5])
+        else:
+            raise Exception(std_errors[4])
+
     #DEPRECATED FOR OBJECT CENTER ARE COLLISION
     def get_current_global_pos(self):
         return self.__current_global_pos
@@ -329,8 +360,11 @@ class Mootor:
             raise Exception(std_errors[3])
 
     def handle_time(self) -> None:
-        if self.__use_fps_limit:
-            if self.__fps_limit != None:
+        if self.__use_fps_limit and self.__fps_limit != None:
                 self.__clock.tick(self.__fps_limit)
-            else:
+                return
+        if self.__use_fps_limit and self.__fps_limit == None:
                 raise Exception(std_errors[2])
+        
+        self.__clock.tick()
+        #print(self.__clock.get_fps())

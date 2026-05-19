@@ -1,0 +1,14 @@
+{
+    "colours": {
+        "colour_1": [255, 0, 0, 255],
+        "button_colour_1": [69, 40, 60, 255]
+    },
+    "textures": {
+        "nupp_vaike_vasak": "textures/props/nupp1.png",
+        "nupp_vaike_kesk": "textures/props/nupp2.png",
+        "nupp_vaike_parem": "textures/props/nupp3.png"
+    },
+    "fonts": {
+        "Tiny5-20": ["fonts/Tiny5/Tiny5-Regular.ttf", 20]
+    }
+}

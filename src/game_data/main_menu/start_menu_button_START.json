@@ -1,6 +1,6 @@
 {
-    "position": [520, 210],
-    "dimensions": [80, 80],
+    "position": [490, 210],
+    "dimensions": [100, 100],
     
     "grid_draw": true,
     "grid_dimensions": [3, 1],
@@ -14,9 +14,9 @@
 
     "draw_type": "textured",
     "colour_name": 0,
-    "texture_name": "button_1",
+    "texture_name": "nupp_vaike_kesk",
 
     "draw_with_text": true,
     "text_to_draw": "START GAME",
-    "text_colour_name": "colour_1"
+    "text_colour_name": "button_colour_1"
 }

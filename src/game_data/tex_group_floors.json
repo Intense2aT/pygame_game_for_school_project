@@ -1,0 +1,25 @@
+{
+    "colours": {
+        "colour_1": [255, 0, 0, 255]
+    },
+    "textures": {
+        "cobble_1": "textures/floors/cobble_1.png",
+        "kivisein": "textures/floors/kivisein.png",
+        "kivisein_alumine": "textures/floors/kiviseinAlumine.png",
+        "kivisein_kõrval": "textures/floors/kiviseinKorval.png",
+        "kivisein_nurk_1": "textures/floors/kiviseinNurk1.png",
+        "kivisein_nurk_2": "textures/floors/kiviseinNurk2.png",
+        "kivisein_uks_aar_1": "textures/floors/kiviseinUksAar1.png",
+        "kivisein_uks_aar_2": "textures/floors/kiviseinUksAar2.png",
+        "kivisein_uks_peal": "textures/floors/kiviseinUksUlemine.png",
+        "kivisein_uks_nurk_1": "textures/floors/kiviseinUksUlemineNurk1.png",
+        "kivisein_uks_nurk_2": "textures/floors/kiviseinUksUlemineNurk2.png",
+        "kivisein_peal": "textures/floors/kiviseinUlemine.png",
+        "kivisein_nurk_3": "textures/floors/kiviseinUlemineNurk1.png",
+        "kivisein_nurk_4": "textures/floors/kiviseinUlemineNurk2.png",
+        "puitpõrand": "textures/floors/puitPorand.png"
+    },
+    "fonts": {
+        "Tiny5-20": ["fonts/Tiny5/Tiny5-Regular.ttf", 20]
+    }
+}

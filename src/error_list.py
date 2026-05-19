@@ -1,7 +1,9 @@
 error_dict_standard:dict = {
     1: "Standard Error 1: Pygame already initialized.",
     2: "Standard Error 2: Using fps limit, but float value of the limit is undefined",
-    3: "standard Error 3: Fps limit was set to an impossible / most likely unwanted value.",
+    3: "Standard Error 3: Fps limit was set to an impossible / most likely unwanted value.",
+    4: "Standard Error 4: Selected key not being detected by system, add to system before defining function.",
+    5: "Standard Error 5: Trying to overwrite a keyaction response while overwrite == False.",
 }
 
 error_dict_events:dict = {
@@ -33,6 +35,7 @@ error_dict_objects:dict = {
     7: "Object Error 7: Object is using grid_draw, but grid_dimensions is not defined.",
     8: "Object Error 8: Object's used __colour_name not set for coloured draw call.",
     9: "Object Error 9: __text_colour_name for text rendering is not assigned.",
+    10: "Object Error 10: Can't change differentiated grid point already in dict since override is false."
 }
 
 error_dict_scene:dict = {
