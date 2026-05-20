@@ -62,6 +62,13 @@ class scene:
 
     def __init__(self):
         self.__object_list:dict[str:list[list]] = {}
+        self.__player_enabled:bool = True
+
+    def set_player_enabled(self, set:bool):
+        self.__player_enabled = set
+
+    def get_player_enabled(self):
+        return self.__player_enabled
 
     def addLayer(self, layerName:str, forceOverRide:bool = False):
         if layerName in self.__object_list.keys() and not forceOverRide:
@@ -193,6 +200,9 @@ class Mootor:
         self.__scene_change_break:bool = None
         self.__cur_on_top_ui:scene = None
 
+        self.__player_enabled:bool = False
+        self.__player:objects.player = None
+
         #set running
         self.__running = True
 
@@ -211,6 +221,12 @@ class Mootor:
     #set running to false
     def kill_program(self) -> None:
         self.__running = False
+    
+    def set_player_ref(self, player:objects.player):
+        self.__player = player
+
+    def get_player_ref(self):
+        return self.__player
 
     #events
     def add_handelable_event(self, event:str) -> None:

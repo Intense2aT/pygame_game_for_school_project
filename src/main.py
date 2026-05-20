@@ -86,6 +86,11 @@ tex_group_floors.load_from_json("game_data/tex_group_floors.json")
 tex_group_var = objects.textureGroup()
 tex_group_var.load_from_json("game_data/tex_group_var.json")
 
+#player object init
+player = objects.player(zero_base, tex_group_var)
+player.load_from_json("game_data/player/player.json")
+player.center_on_screen(manager)
+
 #main menu init start
 def main_menu_button_1_interact(mootor):
     mootor.set_cur_renderable_scene(scene2)
@@ -158,6 +163,8 @@ testcase1.center_text()
 scene2 = mootor.scene()
 scene2.addLayer("layer_1")
 scene2.addToLayer(testcase1, "draw/ui_interact", "layer_1")
+scene2.addLayer("player")
+scene2.addToLayer(player, "draw", "player")
 #scene 2 init end
 
 manager.set_cur_renderable_scene(main_menu)
