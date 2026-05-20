@@ -103,6 +103,7 @@ class object:
         #base settings handling
         self.__position:list[float, float] = object_base_settings[0]
         self.__dimensions:list[float, float] = object_base_settings[1]
+        self.__rotation:float = 0.0
         
         #for drawing a grid of equal sized objects
         #grid will still use the top left position of the grid for position
@@ -117,6 +118,8 @@ class object:
 
         self.__use_different_interaction_field:bool = False
         self.__interaction_field:list[list[float, float]] = None
+        self.__texture_size_fix:list[list[float, float]] = None
+        self.__draw_field_under_object:bool = False
 
         self.__game_interact_func = None
         self.__ui_interact_func = None
@@ -148,6 +151,8 @@ class object:
                 self.set_position(data[key])
             elif key == "dimensions":
                 self.set_dimensions(data[key])
+            elif key == "rotation":
+                self.set_rotation(data[key])
             elif key == "grid_draw":
                 self.set_grid_draw(data[key])
             elif key == "grid_dimensions":
@@ -156,6 +161,8 @@ class object:
                 self.use_other_interaction_field(data[key])
             elif key == "interaction_field":
                 self.set_other_interaction_field(data[key])
+            elif key == "draw_field_under_object":
+                self.set_draw_field_under_object(data[key])
             elif key == "responsive_mouse_button":
                 self.set_responsive_mouse_button(data[key])
             elif key == "respond_continuous":
@@ -191,6 +198,12 @@ class object:
     
     def set_dimensions(self, new_dimensions:list[float, float]):
         self.__dimensions = new_dimensions
+
+    def set_rotation(self, deg:float):
+        self.__rotation = deg
+
+    def get_rotation(self):
+        return self.__rotation
 
     def set_grid_draw(self, set:bool):
         self.__grid_draw = set
@@ -265,15 +278,37 @@ class object:
 
     def set_interaction_field_for_grid(self):
         self.__interaction_field = [
-            self.__position,
+            #FUCK PYTHON I DO NOT WANT THIS PASSED BY REFERENCE
+            [
+                self.__position[0],
+                self.__position[1]
+            ],
             [
                 self.__dimensions[0] * self.__grid_dimensions[0],
                 self.__dimensions[1] * self.__grid_dimensions[1]
             ]
         ]
 
+    def fix_interaction_field_to_texture(self, tex_size:int):
+        self.__interaction_field[0][1] += self.get_dimensions()[1] / tex_size * self.__texture_size_fix[0][0]
+        self.__interaction_field[1][1] -= self.get_dimensions()[1] / tex_size * self.__texture_size_fix[0][1]
+        self.__interaction_field[0][0] += self.get_dimensions()[0] / tex_size * self.__texture_size_fix[1][0]
+        self.__interaction_field[1][0] -= self.get_dimensions()[0] / tex_size * self.__texture_size_fix[1][1]
+
     def get_other_interaction_field(self):
         return self.__interaction_field
+    
+    def set_texture_size_fix(self, adjustment:list[float, float]) -> None:
+        self.__texture_size_fix = adjustment
+
+    def get_texture_size_fix(self):
+        return self.__texture_size_fix
+    
+    def set_draw_field_under_object(self, set:bool) -> None:
+        self.__draw_field_under_object = set
+
+    def get_draw_field_under_object(self) -> bool:
+        return self.__draw_field_under_object
     
     def set_game_interact_func(self, function):
         self.__game_interact_func = function
@@ -481,6 +516,14 @@ class object:
 
     #main draw, drawType is for wether the draw should be textured or coloured
     def draw(self, Mootor):
+        if self.__draw_field_under_object:
+            if self.__colour_name != None:
+                pygame.draw.rect(Mootor.get_screen(), self.getTextureGroup().getColour(self.__colour_name), 
+                                 (tuple(standardise_with_engine(self.get_other_interaction_field()[0], Mootor.get_current_global_pos())),
+                                  tuple(self.get_other_interaction_field()[1])))
+            else:
+                raise Exception(object_errors[8])
+
         if self.__draw_type == "textured":
             if self.__texture_name != None:
                 if self.__grid_draw:
@@ -488,7 +531,7 @@ class object:
                         raise Exception(object_errors[7])
                     else:
                         if self.__grid_surface_prerender != None:
-                            Mootor.get_screen().blit(self.__grid_surface_prerender, standardise_with_engine(self.get_position(), Mootor.get_current_global_pos()))
+                            Mootor.get_screen().blit(pygame.transform.rotate(self.__grid_surface_prerender, self.__rotation), standardise_with_engine(self.get_position(), Mootor.get_current_global_pos()))
                         else:
                             drawn_object = pygame.transform.scale(self.getTextureGroup().getTexture(self.__texture_name), self.get_dimensions())
                             true_cords = standardise_with_engine(self.get_position(), Mootor.get_current_global_pos())
@@ -501,7 +544,7 @@ class object:
                                                     true_cords[1] + self.__dimensions[1] * j)))
                             Mootor.get_screen().blits(draw_list)
                 else:
-                    Mootor.get_screen().blit(pygame.transform.scale(self.getTextureGroup().getTexture(self.__texture_name), self.get_dimensions()), 
+                    Mootor.get_screen().blit(pygame.transform.rotate(pygame.transform.scale(self.getTextureGroup().getTexture(self.__texture_name), self.get_dimensions()), self.__rotation), 
                                              standardise_with_engine(self.get_position(), Mootor.get_current_global_pos()))
             else:
                 raise Exception(object_errors[3])
@@ -509,7 +552,7 @@ class object:
             raise Exception(object_errors[2])
         else:
             if self.__colour_name != None:
-                pygame.draw.rect(Mootor.get_screen(), self.getTextureGroup().getColour(), 
+                pygame.draw.rect(Mootor.get_screen(), self.getTextureGroup().getColour(self.__colour_name), 
                                  (tuple(standardise_with_engine(self.get_position(), Mootor.get_current_global_pos())),
                                   tuple(self.get_dimensions())))
             else:
@@ -517,7 +560,7 @@ class object:
             
         if self.__draw_with_text:
             if self.__rendered_text != None:
-                final_renderable_surface = pygame.transform.scale(self.__rendered_text, self.get_text_dimensions())
+                final_renderable_surface = pygame.transform.rotate(pygame.transform.scale(self.__rendered_text, self.get_text_dimensions()), self.__rotation)
                 Mootor.get_screen().blit(final_renderable_surface,
                                          standardise_with_engine(self.__text_position, Mootor.get_current_global_pos()))
             else:

@@ -7,13 +7,14 @@
 
     "use_different_interaction_field": true,
     "interaction_field": 0,
+    "draw_field_under_object": true,
 
     "responsive_mouse_button": 1,
-    "respond_continuous": false,
-    "call_on_press": false,
+    "respond_continuous": true,
+    "call_on_press": true,
 
     "draw_type": "textured",
-    "colour_name": 0,
+    "colour_name": "colour_1",
     "texture_name": "nupp_vaike_parem",
 
     "draw_with_text": true,
